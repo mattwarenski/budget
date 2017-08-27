@@ -3,13 +3,18 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { SqlService } from "./services/sql.service";
+import { ExpenseViewerComponent } from './components/expense-viewer/expense-viewer.component';
+import {DataTableModule,SharedModule} from 'primeng/primeng';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ExpenseViewerComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule, 
+    DataTableModule, 
+    SharedModule
   ],
   providers: [SqlService],
   bootstrap: [AppComponent]
