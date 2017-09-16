@@ -44,7 +44,12 @@ export class SqlService {
         let obj = new entity();
         for(let i = 0; i < sqlObject[0].columns.length; i++){
           let columnName = sqlObject[0].columns[i];
-          obj[columnName] =  value[i];
+          if(columnName.includes("date") || columnName.includes("Date")){
+            obj[columnName] = new Date(value[i]);
+          }
+          else{
+            obj[columnName] =  value[i];
+          }
         }
         vals.push(obj);
       })
@@ -66,7 +71,7 @@ export class SqlService {
 
   upsert(table: string, row: any){
     let keys = Object.keys(row).map(k => `"${k}"`).join(', ');
-    let values = (<any>Object).values(row).map(k => `"${k}"`).join(', ');
+    let values = (<any>Object).values(row).map(k => `?`).join(', ');
     let stmt = "REPLACE INTO " + table + " (" + keys + ") values (" + values + ");";
     this.db.exec(stmt);
     this.writeDB();

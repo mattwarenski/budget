@@ -1,6 +1,6 @@
 export class Expense{
   id: number;
-  date: string;
+  date: Date;
   name: string;
   amount: number; 
   categoryId: number;

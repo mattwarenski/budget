@@ -7,8 +7,15 @@
   </div>
 </div>
 <div class="form-group">
-  <p-dataTable [value]="expenses" (rowClick)="onRowClick($event)" (onEditComplete)="onEditComplete($event)" [editable]='true'>
-    <p-column field="date" header="Date" [editable]="true"></p-column>
+  <p-dataTable [scrollable]="true" scrollHeight="200px" [value]="expenses" (rowClick)="onRowClick($event)" (onEditComplete)="onEditComplete($event.data)" [editable]='true'>
+    <p-column field="date"  [style]=" {'overflow':'visible' }" header="Date" [editable]="true">
+       <ng-template let-col let-ex="rowData" pTemplate="body">
+             {{ex[col.field] | date}}
+        </ng-template>
+        <ng-template let-col let-ex="rowData" pTemplate="editor">
+            <p-calendar (onSelect)="onEditComplete($event)"	[(ngModel)]="ex[col.field]"></p-calendar>
+        </ng-template>
+    </p-column>
     <p-column field="name" header="Name" [editable]="true"></p-column>
     <!--<p-column header="Amount" [editable]="true">-->
     <p-column field="categoryId" header="Category" [editable]="true"></p-column>

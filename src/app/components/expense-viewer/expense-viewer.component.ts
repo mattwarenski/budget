@@ -3,6 +3,7 @@ import { Expense } from "../../model/expense";
 import {DataTableModule,SharedModule} from 'primeng/primeng';
 import { CurrencyPipe } from '@angular/common';
 import { SqlService } from "../../services/sql.service";
+import  {Table } from "ng2-sql.js"
 
 @Component({
   selector: 'app-expense-viewer',
@@ -19,13 +20,15 @@ export class ExpenseViewerComponent implements OnInit {
     private sqlService: SqlService 
   ) { }
 
-  onEditComplete(event){
-    console.log('event happened', event); 
-    this.sqlService.upsert("expenses", event.data);
+  onEditComplete(data){
+    console.log('event happened', data); 
+    this.sqlService.upsert("expenses", data);
   }
 
   ngOnInit() {
     this.expenses = this.sqlService.selectAll("expenses", Expense);
+    //this.expenses.forEach( e => e.date = new Date());
+    //this.expenses.forEach( e => this.sqlService.upsert("expenses", e))
   }
 
   onRowClick(e:any) {
@@ -33,6 +36,7 @@ export class ExpenseViewerComponent implements OnInit {
   }
 
   onAdd(){
+    let t = Table();
     console.log('adding');
     let newExpense = new Expense();
     newExpense.accountId = this.accountId;
@@ -40,7 +44,8 @@ export class ExpenseViewerComponent implements OnInit {
     newExpense.name = "none"
     newExpense.categoryId = 2;
 
-    newExpense.date = this.expenses.length > 0 ? this.expenses[this.expenses.length - 1].date : null;
+    newExpense.date = this.expenses.length > 0 ? this.expenses[this.expenses.length - 1].date : new Date();
     this.sqlService.upsert("expenses", newExpense )
+    this.expenses.push(newExpense);
   }
 }
