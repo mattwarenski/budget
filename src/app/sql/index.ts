@@ -1,10 +1,10 @@
 import {DBFilter} from "./DBFilter"
 import {DataBase} from "./DataBase"
-import { Table } from "./Table";
+import { RowEntity } from "./RowEntity";
 import { Column, DataType, Constraint } from "./decorators";
 
 
-class TestClass extends Table{
+class TestClass extends RowEntity{
   constructor(){
     super("Test");
   }
@@ -17,7 +17,7 @@ class TestClass extends Table{
   date: Date;
 }
 
-class TestClass2 extends Table{
+class TestClass2 extends RowEntity{
   constructor(){
     super("Test");
   }
@@ -43,12 +43,12 @@ db.initDB(()=>{
   tc.testInteger = 7;
   tc.testNormalInt = 4;
   tc.date = new Date();
-  db.insert(tc);
+  db.upsert(tc);
   tc.testInteger = 3;
   tc.testNormalInt = 44;
   tc.date = new Date();
   tc.date.setFullYear(1880)
-  db.insert(tc);
+  db.upsert(tc);
   let filterRow = new TestClass();
   filterRow.testInteger = 3;
   filterRow.testNormalInt = 44;

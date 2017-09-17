@@ -4,6 +4,8 @@
     "outDir": "../out-tsc/app",
     "module": "es2015",
     "baseUrl": "",
+    "allowJs" : true,
+    "maxNodeModuleJsDepth" : 0,
     "types": []
   },
   "exclude": [

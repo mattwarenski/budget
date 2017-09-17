@@ -1,11 +1,11 @@
 import { ColumnInfo } from "./ColumnInfo"
 
-export class Table{
+export class RowEntity{
   private columns: ColumnInfo[];
-  private name: string;
+  private __name: string;
   
   constructor(name: string){
-    this.name = name;
+    this.__name = name;
     this.init();
   }
 
@@ -36,6 +36,6 @@ export class Table{
   }
 
   getName(): string{
-    return this.name;
+    return this.__name;
   }
 }

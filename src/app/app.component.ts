@@ -11,7 +11,6 @@ import { Expense } from "./model/expense";
 export class AppComponent implements OnInit {
 
   ngOnInit(): void {
-    this.sqlService.openDB('/home/mathew/TEST_DB.sqlite', '/home/mathew/dev/scrooge/src/assets/sql/schema.sql'); 
   }
 
   title = 'app';
