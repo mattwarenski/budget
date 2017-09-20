@@ -6,7 +6,7 @@ export class Expense extends RowEntity{
     super("Expense") 
   }
 
-  @Column(DataType.INT, Constraint.PRIMARY_KEY)
+  @Column(DataType.INTEGER, Constraint.PRIMARY_KEY)
   id: number;
 
   @Column(DataType.DATE)
@@ -14,6 +14,9 @@ export class Expense extends RowEntity{
 
   @Column(DataType.VARCHAR, Constraint.NOT_NULL)
   name: string;
+
+  @Column(DataType.VARCHAR)
+  description: string;
 
   @Column(DataType.DECIMAL ,Constraint.NOT_NULL)
   amount: number; 
