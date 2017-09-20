@@ -90,13 +90,13 @@ export class DataBase{
   getAllRows(table){
     let model = new table();
     let statment = this.db.prepare(`SELECT * FROM ${model.getName()};`)
-    return this.mapResultsToTable(statment);
+    return this.mapResultsToTable(statment, table);
   }
 
-  private mapResultsToTable(statement){
+  private mapResultsToTable<T extends RowEntity>(statement, instance: T){
     let res = [];
     while(statement.step()){
-      let row = {};
+      let row = instance.createNew();
       let columns =  statement.getColumnNames();
       let data = statement.get();
       columns.forEach( (col, index) => row[col] = data[index]);
@@ -113,7 +113,7 @@ export class DataBase{
     where += filter ? " " + filter.getSortByClause() : "";
     let statementSql = `SELECT * FROM ${modelObject.getName()} ${where}`;
     let statement = this.db.prepare(statementSql);
-    return this.mapResultsToTable(statement);
+    return this.mapResultsToTable(statement, modelObject);
   }
 
   private createTable(table: RowEntity){

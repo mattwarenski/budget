@@ -9,6 +9,16 @@ export class RowEntity{
     this.init();
   }
 
+  createNew(){
+    let n = {};
+    Object.getOwnPropertyNames(this).forEach( key => {
+        if(typeof this[key] === 'function'){
+          n[key] = this[key];
+        }
+    });
+    return n;
+  }
+
   private init(){
     if(!this.columns){
       this.columns = []; 
