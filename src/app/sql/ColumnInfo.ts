@@ -14,6 +14,10 @@ export class ColumnInfo{
     return this.name;
   }
 
+  getType(): DataType{
+    return this.dataType; 
+  }
+
   toSqlArg(): string{
     return `${this.name} ${DataType[this.dataType]} ${this.constraints.map( c => Constraint[c].replace("_", " ")).join(" ")}`;
   }

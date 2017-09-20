@@ -2,8 +2,8 @@ import { environment } from "../../environments/environment";
 import { Injectable } from '@angular/core';
 import { Expense } from "../model/expense";
 import { DataBase } from "../sql/DataBase";
-//import { AsyncSubject } from "rxjs"
 import { AsyncSubject } from "rxjs/AsyncSubject";
+import { NgZone } from "@angular/core";
 
 @Injectable()
 export class SqlService {
@@ -12,12 +12,14 @@ export class SqlService {
   private dbReady: boolean
   private initSubject: AsyncSubject<DataBase>;
 
-  constructor() {
+  constructor(private zone: NgZone) {
     this.initSubject = new AsyncSubject();
     this.db = new DataBase(environment.dbLocation, [new Expense()]);
     this.db.initDB(()=>{
-      this.initSubject.next(this.db);
-      this.initSubject.complete();
+      this.zone.run(()=>{
+        this.initSubject.next(this.db)
+        this.initSubject.complete();
+      });
     });
   }
 

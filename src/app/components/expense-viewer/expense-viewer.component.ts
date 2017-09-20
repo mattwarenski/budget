@@ -14,6 +14,7 @@ export class ExpenseViewerComponent implements OnInit {
 
   expenses: Expense[];
   selectedRow;
+  Date = Date;
   private accountId = 3;
 
   constructor(
@@ -26,7 +27,10 @@ export class ExpenseViewerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.sqlService.getDB().subscribe((db : DataBase)=> this.expenses = db.getRows(new Expense()));
+    this.sqlService.getDB().subscribe((db : DataBase)=>{
+      this.expenses = db.getRows(new Expense())
+      console.log("got", this.expenses);
+    }); 
   }
 
   onRowClick(e:any) {
@@ -41,7 +45,7 @@ export class ExpenseViewerComponent implements OnInit {
     newExpense.categoryId = 2;
 
     newExpense.date = this.expenses.length > 0 ? this.expenses[this.expenses.length - 1].date : new Date();
-    this.sqlService.getDB().subscribe( db => db.upsert(newExpense ));
     this.expenses.push(newExpense);
+    this.sqlService.getDB().subscribe( db => db.upsert(newExpense ));
   }
 }

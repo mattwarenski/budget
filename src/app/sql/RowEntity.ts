@@ -1,4 +1,5 @@
 import { ColumnInfo } from "./ColumnInfo"
+import * as moment from 'moment';
 
 export class RowEntity{
   private columns: ColumnInfo[];
@@ -40,7 +41,7 @@ export class RowEntity{
 
   private formatObject(prop: any){
     if(prop instanceof Date){
-      return `'${prop.toISOString().slice(0, 19).replace('T', ' ')}'`;
+      return moment(prop).format("YYYY-MM-DD")
     } 
     return prop;
   }

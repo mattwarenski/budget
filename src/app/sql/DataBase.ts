@@ -1,6 +1,8 @@
 import { RowEntity } from "./RowEntity"
 import { DBFilter } from "./DBFilter"
 import * as SQL from "sql.js"
+import { DataType } from "./decorators";
+import * as moment from 'moment';
 
 declare global {
   interface Window {
@@ -58,7 +60,6 @@ export class DataBase{
   }
 
   getTables(){
-    console.log("getting tables", this.db);
     return this.db.exec("SELECT name FROM sqlite_master WHERE type='table'");
   }
 
@@ -77,7 +78,6 @@ export class DataBase{
     }); 
      
     let statement = `REPLACE INTO ${table.getName()} (${cols.join(",")}) VALUES (${cols.map( c=>"?")});`;
-    console.log("vals", vals);
     try{
       this.db.run(statement, vals); 
       this.writeDB();
@@ -97,9 +97,17 @@ export class DataBase{
     let res = [];
     while(statement.step()){
       let row = instance.createNew();
-      let columns =  statement.getColumnNames();
+      let columnInfo = instance.getColumns();
       let data = statement.get();
-      columns.forEach( (col, index) => row[col] = data[index]);
+      columnInfo.forEach( (col, index) => {
+        if(col.getType() === DataType.DATE){
+          let date = moment(data[index]);
+          row[col.getName()] = date.toDate();
+        }
+        else{
+          row[col.getName()] = data[index];
+        }
+      });
       res.push(row);
     }
     return res;
