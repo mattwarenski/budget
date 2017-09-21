@@ -10,20 +10,20 @@ export class RowEntity{
     this.init();
   }
 
-  createNew(){
-    let n = {};
-    Object.getOwnPropertyNames(this).forEach( key => {
-        if(typeof this[key] === 'function'){
-          n[key] = this[key];
-        }
-    });
-    return n;
-  }
-
   private init(){
     if(!this.columns){
       this.columns = []; 
     }
+  }
+
+  /**
+   * Copy constructor. All class properties that need to transfer must manually be called out here"
+   */
+  createNew(){
+    let copy = Object.create(this.constructor.prototype);
+    copy["__name"] = this.__name;
+    copy["columns"] = this.columns;
+    return copy;
   }
 
   addColumn(column: ColumnInfo){
