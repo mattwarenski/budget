@@ -2,8 +2,6 @@
 #
 *.swp
 *.*.swp
-*.*.*.swp
-.*.*.*.swp
 /data
 
 # compiled output
