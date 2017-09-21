@@ -3,7 +3,6 @@ import { ColumnInfo } from "./ColumnInfo";
 
 export function Column(dataType: DataType, constraints?: Constraint | Constraint[]){
   return function(instance: RowEntity, propName: string){
-    console.log("cont", constraints);
     let c = constraints === undefined ? [] : [].concat(constraints);
     if(!(instance instanceof RowEntity)){
       throw new TypeError("Cannot use Column decorator on property that is not in an instance of Table.") 

@@ -70,6 +70,7 @@ export class DataBase{
   upsert(table: RowEntity){
     let vals = [];
     let cols = []
+    console.log("table", table);
     table.getColumns().forEach( (c, i) => {
       if(table.getValues()[i] !== undefined){
         vals.push(table.getValues()[i]);

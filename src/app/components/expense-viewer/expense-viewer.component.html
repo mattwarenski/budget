@@ -13,7 +13,7 @@
              {{ex[col.field] | date}}
         </ng-template>
         <ng-template let-col let-ex="rowData" pTemplate="editor">
-            <p-calendar (onSelect)="onEditComplete($event)"	[(ngModel)]="ex[col.field]"></p-calendar>
+            <p-calendar (onSelect)="onEditComplete(ex)"	[(ngModel)]="ex[col.field]"></p-calendar>
         </ng-template>
     </p-column>
     <p-column field="name" header="Name" [editable]="true"></p-column>

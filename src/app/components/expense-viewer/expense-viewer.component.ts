@@ -45,7 +45,7 @@ export class ExpenseViewerComponent implements OnInit {
     newExpense.categoryId = 2;
 
     newExpense.date = this.expenses.length > 0 ? this.expenses[this.expenses.length - 1].date : new Date();
-    this.expenses.push(newExpense);
+    this.expenses = [newExpense, ...this.expenses];
     this.sqlService.getDB().subscribe( db => db.upsert(newExpense ));
   }
 }
