@@ -5,25 +5,24 @@
     <div class="form-inline">
       <div class="form-group">
         <label for="category-select">Category:</label>
-        <select class="input-sm form-control" id="category-select"></select>
+        <p-dropdown [options]="categoryList" (onChange)="onCategorySelect($event)" id="category-select"></p-dropdown>
       </div>
       <div class="form-group">
-        <a><span class="glyphicon glyphicon-plus text-success"></span></a>
-        <a><span class="glyphicon glyphicon-trash text-danger"></span></a>
+        <a ><span class="glyphicon glyphicon-plus text-success"></span></a>
+        <a><span (click)="removeCategory()" class="glyphicon glyphicon-trash text-danger"></span></a>
       </div>
     </div>
-    <div class="form-group">
-      <label for="name-input">Name:</label>
-      <input class="input-sm form-control" id="name-input">
+    <div *ngIf="selectedCategory">
+      <div class="form-group">
+        <label for="name-input">Name:</label>
+        <input class="input-sm form-control" id="name-input" (change)="updateCategory()" [(ngModel)]="selectedCategory.name">
+      </div>
+      <div class="form-group">
+        <label for="amount-input">Amount:</label>
+        <input class="input-sm form-control" id="amount-input" (change)="updateCategory()" [(ngModel)]="selectedCategory.amount">
+      </div>
     </div>
-    <div class="form-group">
-      <label for="amount-input">Amount:</label>
-      <input class="input-sm form-control" id="amount-input">
-    </div>
-    <div>
-    </div>
-  </div>
-  <div class="col-md-1">
   </div>
 </div>
-
+<div class="col-md-1">
+</div>

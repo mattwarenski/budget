@@ -105,6 +105,10 @@ export class DataBase{
     }); 
      
     let statement = `REPLACE INTO ${table.getName()} (${cols.join(",")}) VALUES (${cols.map( c=>"?")});`;
+    this.run(statement, vals);
+  }
+
+  private run(statement: string, vals?){
     try{
       this.db.run(statement, vals); 
       this.writeDB();
@@ -112,6 +116,21 @@ export class DataBase{
     catch(e){
       throw new Error(`Unable to run query: ${statement}.\nValues: ${vals.join(",")}.\n Original Message: ${e.message}`); 
     }
+  
+  }
+
+  deleteRow(entity: RowEntity){
+    let cols = entity
+      .getColumns()
+      .filter( c=> entity[c.getName()])
+      .map( c => c.getName());
+    if(!cols.length){
+      console.error("won't delete empty row (no where clause)", entity); 
+    }
+
+    let vals = cols.map( c => entity[c])
+    let statment = `DELETE FROM ${entity.getName()} WHERE ${cols.map(c=>c+"=?").join(" AND ")}`;
+    this.run(statment, vals);
   }
 
   getAllRows(table){

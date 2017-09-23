@@ -35,12 +35,7 @@ export class ExpenseViewerComponent implements OnInit {
     }); 
 
     this.categoryService.getCategories().subscribe( (categories: Category[]) => {
-      this.categories = categories.map(c => {
-        return { label : c.getName(),
-                 name: c.getName(),
-                "value": c.id
-                };
-      });
+      this.categories = CategoryService.mapCategoriesForSelect(categories)
     });
   }
 

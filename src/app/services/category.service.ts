@@ -24,12 +24,37 @@ export class CategoryService {
     return this.currentCategories;  
   }
 
-  addCategory(newCategory: Category): void{
+  upsertCategory(category: Category): void{
     this.sqlService.getDB().subscribe(
       (db: DataBase) => {
-        db.upsert(newCategory);
-        this.categories.push(newCategory);
+        let currentIndex = this.categories.findIndex( c => c.id === category.id); 
+        if(currentIndex < 0){
+          this.categories.push(category);
+        }
+        else{
+          this.categories[currentIndex] = category; 
+        }
+        db.upsert(category);
         this.currentCategories.next(this.categories);
       });
+  }
+
+  deleteCategory(category: Category): void{
+    this.sqlService.getDB().subscribe(
+      (db: DataBase) => {
+        db.deleteRow(category);
+        let index = this.categories.findIndex( c => category.id === c.id);
+        this.categories.splice(index, 1);
+        this.currentCategories.next(this.categories);
+      });
+  }
+
+  static mapCategoriesForSelect(categories: Category[]): any[]{
+    return categories.map(c => {
+      return { label : c.getName(),
+        name: c.getName(),
+        "value": c.id
+      }
+    });
   }
 }
