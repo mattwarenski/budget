@@ -8,11 +8,13 @@ import {CalendarModule,DropdownModule,  DataTableModule,SharedModule} from 'prim
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from "@angular/forms";
 import { } from "primeng/components/dropdown/dropdown";
+import { CategoryViewerComponent } from './components/category-viewer/category-viewer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ExpenseViewerComponent
+    ExpenseViewerComponent,
+    CategoryViewerComponent
   ],
   imports: [
     BrowserModule, 
