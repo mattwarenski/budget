@@ -1,9 +1,11 @@
 import { Input, Component, OnInit } from '@angular/core';
 import { Expense } from "../../model/expense";
-import {DataTableModule,SharedModule} from 'primeng/primeng';
+import {DropdownModule, DataTableModule,SharedModule} from 'primeng/primeng';
 import { CurrencyPipe } from '@angular/common';
 import { SqlService } from "../../services/sql.service";
 import { DataBase } from "../../sql/DataBase";
+import { Category } from "../../model/category";
+import { CategoryService } from "../../services/category.service";
 
 @Component({
   selector: 'app-expense-viewer',
@@ -14,23 +16,32 @@ export class ExpenseViewerComponent implements OnInit {
 
   expenses: Expense[];
   selectedRow;
+  categories;
   Date = Date;
   private accountId = 3;
 
   constructor(
-    private sqlService: SqlService 
+    private sqlService: SqlService,
+    private categoryService: CategoryService
   ) { }
 
   onEditComplete(data){
-    console.log('event happened', data); 
     this.sqlService.getDB().subscribe((db: DataBase)=> db.upsert(data))
   }
 
   ngOnInit() {
     this.sqlService.getDB().subscribe((db : DataBase)=>{
-      this.expenses = db.getRows(new Expense())
-      console.log("got", this.expenses);
+      this.expenses = db.getRows(new Expense());
     }); 
+
+    this.categoryService.getCategories().subscribe( (categories: Category[]) => {
+      this.categories = categories.map(c => {
+        return { label : c.getName(),
+                 name: c.getName(),
+                "value": c.id
+                };
+      });
+    });
   }
 
   onRowClick(e:any) {
@@ -46,6 +57,6 @@ export class ExpenseViewerComponent implements OnInit {
 
     newExpense.date = this.expenses.length > 0 ? this.expenses[this.expenses.length - 1].date : new Date();
     this.expenses = [newExpense, ...this.expenses];
-    this.sqlService.getDB().subscribe( db => db.upsert(newExpense ));
+    this.sqlService.getDB().subscribe( db => db.upsert(newExpense));
   }
 }

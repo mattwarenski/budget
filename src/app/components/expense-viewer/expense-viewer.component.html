@@ -7,7 +7,7 @@
   </div>
 </div>
 <div class="form-group">
-  <p-dataTable [scrollable]="true" scrollHeight="200px" [value]="expenses" (rowClick)="onRowClick($event)" (onEditComplete)="onEditComplete($event.data)" [editable]='true'>
+  <p-dataTable *ngIf='categories' [scrollable]="true" scrollHeight="200px" [value]="expenses" (rowClick)="onRowClick($event)" (onEditComplete)="onEditComplete($event.data)" [editable]='true'>
     <p-column field="date"  [style]=" {'overflow':'visible' }" header="Date" [editable]="true">
        <ng-template let-col let-ex="rowData" pTemplate="body">
              {{ex[col.field] | date}}
@@ -17,8 +17,11 @@
         </ng-template>
     </p-column>
     <p-column field="name" header="Name" [editable]="true"></p-column>
-    <!--<p-column header="Amount" [editable]="true">-->
-    <p-column field="categoryId" header="Category" [editable]="true"></p-column>
+    <p-column field="categoryId" header="Category" [editable]="false" [style]="{'overflow':'visible'}">
+      <ng-template let-col let-ex="rowData" pTemplate='body'>
+        <p-dropdown [filter]='true' [(ngModel)]='ex[col.field]' (onChange)="onEditComplete(ex)" [options]='categories' [style]="{'width': '100%'}"></p-dropdown>
+      </ng-template>
+    </p-column>
     <p-column field="amount" header="Amount" styleClass="text-right"  [editable]="true">
         <ng-template let-col let-ex="rowData" pTemplate="body">
           <span>{{ex['amount'] |  currency:'USD':true:'1.2-2' }}</span>
