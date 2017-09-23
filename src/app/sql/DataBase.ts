@@ -3,6 +3,7 @@ import { DBFilter } from "./DBFilter"
 import * as SQL from "sql.js"
 import { DataType } from "./decorators";
 import * as moment from 'moment';
+import { ColumnInfo } from "./ColumnInfo";
 
 declare global {
   interface Window {
@@ -37,6 +38,23 @@ export class DataBase{
     });
   }
 
+  private updateSchema(): void{
+    let currentTables = this.getTables();
+    this.tables.forEach( (table: RowEntity) => {
+      if(!currentTables.includes(table.getName())){
+        this.createTable(table);
+      }
+      let cols = table.getColumns().map( (ci: ColumnInfo) => ci.getName());
+      let currentColumns = this.getColumns(table).map( col => col[1]);
+      cols.forEach((column: string)=>{
+        if(!currentColumns.includes(column)){
+          console.warn(`Found column ${column} that is not in table ${table.getName()}. Adding new columns has not been implemented yet`)
+        }
+      })
+    });
+
+  }
+
   readDB(cb: ()=>void){
     fs.readFile(this.filepath, (err, data) => {
       if(err){
@@ -44,6 +62,7 @@ export class DataBase{
       }
       console.log('read data from ', this.filepath, data);
       this.db = new SQL.Database(data);
+      this.updateSchema();
       cb();
     })
   }
@@ -59,18 +78,25 @@ export class DataBase{
     }
   }
 
-  getTables(){
-    return this.db.exec("SELECT name FROM sqlite_master WHERE type='table'");
+  getTables(): string[]{
+    let tables = this.db.exec("SELECT name FROM sqlite_master WHERE type='table'");
+    if(tables && tables.length && tables[0].values.length){
+      return tables[0].values[0]; 
+    }
+    return [];
   }
 
-  getColumns(table: RowEntity){
-    return this.db.exec(`PRAGMA table_info(${table.getName()});`);
+  getColumns(table: RowEntity): string[]{
+    let columns = this.db.exec(`PRAGMA table_info(${table.getName()});`);
+    if(columns && columns.length){
+      return columns[0].values; 
+    }
+    return [];
   }
 
   upsert(table: RowEntity){
     let vals = [];
     let cols = []
-    console.log("table", table);
     table.getColumns().forEach( (c, i) => {
       if(table.getValues()[i] !== undefined){
         vals.push(table.getValues()[i]);
