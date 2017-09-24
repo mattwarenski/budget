@@ -30,11 +30,13 @@ export class ExpenseViewerComponent implements OnInit {
   }
 
   ngOnInit() {
+    let test = new Expense();
+    console.log("rows", test.getColumns());
     this.sqlService.getDB().subscribe((db : DataBase)=>{
       this.expenses = db.getRows(new Expense());
     }); 
 
-    this.categoryService.getCategories().subscribe( (categories: Category[]) => {
+    this.categoryService.getAll().subscribe( (categories: Category[]) => {
       this.categories = CategoryService.mapCategoriesForSelect(categories)
     });
   }

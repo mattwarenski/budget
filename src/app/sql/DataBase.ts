@@ -41,14 +41,14 @@ export class DataBase{
   private updateSchema(): void{
     let currentTables = this.getTables();
     this.tables.forEach( (table: RowEntity) => {
-      if(!currentTables.includes(table.getName())){
+      if(!currentTables.includes(table.getTableName())){
         this.createTable(table);
       }
       let cols = table.getColumns().map( (ci: ColumnInfo) => ci.getName());
       let currentColumns = this.getColumns(table).map( col => col[1]);
       cols.forEach((column: string)=>{
         if(!currentColumns.includes(column)){
-          console.warn(`Found column ${column} that is not in table ${table.getName()}. Adding new columns has not been implemented yet`)
+          console.warn(`Found column ${column} that is not in table ${table.getTableName()}. Adding new columns has not been implemented yet`)
         }
       })
     });
@@ -87,7 +87,7 @@ export class DataBase{
   }
 
   getColumns(table: RowEntity): string[]{
-    let columns = this.db.exec(`PRAGMA table_info(${table.getName()});`);
+    let columns = this.db.exec(`PRAGMA table_info(${table.getTableName()});`);
     if(columns && columns.length){
       return columns[0].values; 
     }
@@ -104,7 +104,7 @@ export class DataBase{
       } 
     }); 
      
-    let statement = `REPLACE INTO ${table.getName()} (${cols.join(",")}) VALUES (${cols.map( c=>"?")});`;
+    let statement = `REPLACE INTO ${table.getTableName()} (${cols.join(",")}) VALUES (${cols.map( c=>"?")});`;
     this.run(statement, vals);
   }
 
@@ -129,7 +129,7 @@ export class DataBase{
     }
 
     let vals = cols.map( c => entity[c])
-    let statment = `DELETE FROM ${entity.getName()} WHERE ${cols.map(c=>c+"=?").join(" AND ")}`;
+    let statment = `DELETE FROM ${entity.getTableName()} WHERE ${cols.map(c=>c+"=?").join(" AND ")}`;
     this.run(statment, vals);
   }
 
@@ -165,14 +165,14 @@ export class DataBase{
     let clause = filters.map( prop => `${prop} = ${modelObject[prop]}`).concat( filter ? filter.getDateConstraints() : []).join(" AND ");
     let where = clause ? "WHERE " + clause : "";
     where += filter ? " " + filter.getSortByClause() : "";
-    let statementSql = `SELECT * FROM ${modelObject.getName()} ${where}`;
+    let statementSql = `SELECT * FROM ${modelObject.getTableName()} ${where}`;
     let statement = this.db.prepare(statementSql);
     return this.mapResultsToTable(statement, modelObject);
   }
 
   private createTable(table: RowEntity){
     //this won't update if there are new tables. It will only not create if the table itself exists
-    let query = `CREATE TABLE IF NOT EXISTS ${table.getName()}(${table.getColumns().map(c => c.toSqlArg()).join(",")});`;
+    let query = `CREATE TABLE IF NOT EXISTS ${table.getTableName()}(${table.getColumns().map(c => c.toSqlArg()).join(",")});`;
     this.db.run(query);
   }
 }

@@ -1,10 +1,12 @@
 import { ColumnInfo } from "./ColumnInfo"
 import * as moment from 'moment';
+import { Column, DataType, Constraint } from "./decorators";
 
-export class RowEntity{
+export abstract class RowEntity{
   private columns: ColumnInfo[];
   private __name: string;
-  
+  abstract id: number;
+
   constructor(name: string){
     this.__name = name;
     this.init();
@@ -46,7 +48,7 @@ export class RowEntity{
     return prop;
   }
 
-  getName(): string{
+  getTableName(): string{
     return this.__name;
   }
 }

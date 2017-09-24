@@ -15,27 +15,43 @@ export class CategoryViewerComponent implements OnInit {
   selectedCategory: Category;
 
   ngOnInit() {
-    this.categoryService.getCategories().subscribe( (categories: Category[])=>{
+    this.categoryService.getAll().subscribe((categories: Category[])=>{
         this.categories = categories;
         this.categoryList = CategoryService.mapCategoriesForSelect(categories); 
-        if(this.categories.length){
+        if(!this.selectedCategory && this.categories.length){
           this.selectedCategory = this.categories[0]; 
         }
      });
   }
 
   updateCategory(){
-    this.categoryService.upsertCategory(this.selectedCategory);
+    this.categoryService.upsertRow(this.selectedCategory);
+  }
+
+  addCategory(){
+    let category = new Category();
+    category.name = "new category";
+    category.budgetAmount = 0;
+    this.selectedCategory = category; 
+    this.categoryService.upsertRow(category);
   }
 
   removeCategory(){
-    this.categoryService.deleteCategory(this.selectedCategory); 
+    if(!this.selectedCategory){
+      console.warn("Can't delete. No selected category") 
+      return;
+    }
+    let index = this.categories.findIndex( c => c.id === this.selectedCategory.id);
+    this.categoryService.deleteRow(this.selectedCategory); 
+    if(!this.categories.length){
+      this.selectedCategory = null; 
+    }
+    else{
+      this.selectedCategory = index-1 < 0 ? this.categories[0] : this.categories[index - 1];
+    }
   }
 
   onCategorySelect(event){
-    console.log("event", event.value); 
     this.selectedCategory = this.categories.find( c => c.id === event.value);
-    console.log("selectedCategory", this.selectedCategory);
   }
-
 }
