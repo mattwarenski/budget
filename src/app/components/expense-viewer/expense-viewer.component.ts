@@ -1,6 +1,6 @@
 import { Input, Component, OnInit } from '@angular/core';
 import { Expense } from "../../model/expense";
-import {DropdownModule, DataTableModule,SharedModule} from 'primeng/primeng';
+import {DropdownModule, DataTableModule, SharedModule} from 'primeng/primeng';
 import { CurrencyPipe } from '@angular/common';
 import { SqlService } from "../../services/sql.service";
 import { DataBase } from "../../sql/DataBase";
@@ -31,8 +31,6 @@ export class ExpenseViewerComponent implements OnInit {
   }
 
   ngOnInit() {
-    let test = new Expense();
-    console.log("rows", test.getColumns());
     this.expenseService.getAll().subscribe((expenses: Expense[])=>{
       this.expenses = expenses; 
     })

@@ -5,6 +5,7 @@ import { DataBase } from "../sql/DataBase";
 import { AsyncSubject } from "rxjs/AsyncSubject";
 import { NgZone } from "@angular/core";
 import { Category } from "../model/category";
+import { Account } from "../sql/Account";
 
 @Injectable()
 export class SqlService {
@@ -15,7 +16,7 @@ export class SqlService {
 
   constructor(private zone: NgZone) {
     this.initSubject = new AsyncSubject();
-    this.db = new DataBase(environment.dbLocation, [new Expense(), new Category()]);
+    this.db = new DataBase(environment.dbLocation, [new Account(), new Expense(), new Category()]);
     this.db.initDB(()=>{
       this.zone.run(()=>{
         this.initSubject.next(this.db)

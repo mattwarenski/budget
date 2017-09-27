@@ -1,0 +1,21 @@
+<p-dataTable *ngIf='accounts' [scrollable]="true" scrollHeight="200px" [value]="accounts" (rowClick)="onRowClick($event)" (onEditComplete)="onEditComplete($event.data)" [editable]='true'>
+  <p-column field="name" header="Name" [editable]="true"></p-column>
+  <p-column field="bank" header="Bank" [editable]="true"></p-column>
+  <p-column field="balance" header="Amount" styleClass="text-right"  [editable]="true">
+    <ng-template let-col let-ex="rowData" pTemplate="body">
+      <span>{{ex['balance'] |  currency:'USD':true:'1.2-2' }}</span>
+    </ng-template>
+  </p-column>
+  <p-column [style]="{'width': '30px'}">
+    <ng-template let-ex="rowData" pTemplate="header">
+      <a (click)="onAdd()">
+        <span class="glyphicon glyphicon-plus text-success"></span>
+      </a>
+    </ng-template>
+    <ng-template let-ex="rowData" pTemplate="body">
+      <a (click)="onDelete(ex)">
+        <span class="glyphicon glyphicon-trash text-danger"></span>
+      </a>
+    </ng-template>
+  </p-column>
+</p-dataTable>

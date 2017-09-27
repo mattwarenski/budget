@@ -9,12 +9,15 @@ import {CalendarModule,DropdownModule,  DataTableModule,SharedModule} from 'prim
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from "@angular/forms";
 import { CategoryViewerComponent } from './components/category-viewer/category-viewer.component';
+import { AccountSelectorComponent } from './components/account-selector/account-selector.component';
+import { AccountService } from "./services/account.service";
 
 @NgModule({
   declarations: [
     AppComponent,
     ExpenseViewerComponent,
-    CategoryViewerComponent
+    CategoryViewerComponent,
+    AccountSelectorComponent
   ],
   imports: [
     BrowserModule, 
@@ -25,7 +28,7 @@ import { CategoryViewerComponent } from './components/category-viewer/category-v
     FormsModule,
     BrowserAnimationsModule
   ],
-  providers: [SqlService, CategoryService, ExpenseService],
+  providers: [SqlService, CategoryService, ExpenseService, AccountService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
