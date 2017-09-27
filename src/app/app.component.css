@@ -1,0 +1,13 @@
+.side-nav {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 75px;
+  border: 2px solid #333;
+}
+
+.nav-button{
+  font-size: 30px;
+  color: black;
+}

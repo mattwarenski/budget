@@ -11,6 +11,7 @@ import { FormsModule } from "@angular/forms";
 import { CategoryViewerComponent } from './components/category-viewer/category-viewer.component';
 import { AccountSelectorComponent } from './components/account-selector/account-selector.component';
 import { AccountService } from "./services/account.service";
+import { LayoutService } from "./services/layout.service";
 
 @NgModule({
   declarations: [
@@ -28,7 +29,7 @@ import { AccountService } from "./services/account.service";
     FormsModule,
     BrowserAnimationsModule
   ],
-  providers: [SqlService, CategoryService, ExpenseService, AccountService],
+  providers: [SqlService, CategoryService, ExpenseService, AccountService, LayoutService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
