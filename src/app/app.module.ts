@@ -1,3 +1,4 @@
+import { ExpenseService } from "./services/expense.service";
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
@@ -7,7 +8,6 @@ import { ExpenseViewerComponent } from './components/expense-viewer/expense-view
 import {CalendarModule,DropdownModule,  DataTableModule,SharedModule} from 'primeng/primeng';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from "@angular/forms";
-import { } from "primeng/components/dropdown/dropdown";
 import { CategoryViewerComponent } from './components/category-viewer/category-viewer.component';
 
 @NgModule({
@@ -25,7 +25,7 @@ import { CategoryViewerComponent } from './components/category-viewer/category-v
     FormsModule,
     BrowserAnimationsModule
   ],
-  providers: [SqlService, CategoryService],
+  providers: [SqlService, CategoryService, ExpenseService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

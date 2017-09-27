@@ -27,7 +27,7 @@
         </a>
       </ng-template>
       <ng-template let-ex="rowData" pTemplate="body">
-        <a>
+        <a (click)="onDelete(ex)">
           <span class="glyphicon glyphicon-trash text-danger"></span>
         </a>
       </ng-template>

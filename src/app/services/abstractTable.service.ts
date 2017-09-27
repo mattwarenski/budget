@@ -1,9 +1,9 @@
 import { Subject } from "rxjs/Subject";
 import { SqlService } from "./sql.service";
 import { DataBase } from "../sql/DataBase";
-import { PrimaryKeyEntity } from "../sql/PrimaryKeyEntity";
+import { RowEntity } from "../sql/RowEntity";
 
-export class AbstractTableService<T extends PrimaryKeyEntity> {
+export class AbstractTableService<T extends RowEntity> {
   entities: T[] = [];
   private sqlService: SqlService;
   private currentEntities: Subject<T[]>;

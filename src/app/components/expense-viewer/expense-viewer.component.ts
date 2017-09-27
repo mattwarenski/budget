@@ -6,6 +6,7 @@ import { SqlService } from "../../services/sql.service";
 import { DataBase } from "../../sql/DataBase";
 import { Category } from "../../model/category";
 import { CategoryService } from "../../services/category.service";
+import { ExpenseService } from "../../services/expense.service";
 
 @Component({
   selector: 'app-expense-viewer',
@@ -21,20 +22,20 @@ export class ExpenseViewerComponent implements OnInit {
   private accountId = 3;
 
   constructor(
-    private sqlService: SqlService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private expenseService: ExpenseService
   ) { }
 
   onEditComplete(data){
-    this.sqlService.getDB().subscribe((db: DataBase)=> db.upsert(data))
+    this.expenseService.upsertRow(data);
   }
 
   ngOnInit() {
     let test = new Expense();
     console.log("rows", test.getColumns());
-    this.sqlService.getDB().subscribe((db : DataBase)=>{
-      this.expenses = db.getRows(new Expense());
-    }); 
+    this.expenseService.getAll().subscribe((expenses: Expense[])=>{
+      this.expenses = expenses; 
+    })
 
     this.categoryService.getAll().subscribe( (categories: Category[]) => {
       this.categories = CategoryService.mapCategoriesForSelect(categories)
@@ -54,6 +55,10 @@ export class ExpenseViewerComponent implements OnInit {
 
     newExpense.date = this.expenses.length > 0 ? this.expenses[this.expenses.length - 1].date : new Date();
     this.expenses = [newExpense, ...this.expenses];
-    this.sqlService.getDB().subscribe( db => db.upsert(newExpense));
+    this.expenseService.upsertRow(newExpense);
+  }
+
+  onDelete(expense: Expense){
+    this.expenseService.deleteRow(expense); 
   }
 }
