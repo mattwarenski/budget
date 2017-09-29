@@ -1,9 +1,15 @@
 <div class="panel panel-primary">
-  <div class="panel-heading">
-    <h5>Accounts</h5>
+  <div class="panel-heading row">
+    <div class="col-md-11">
+      <h5>Accounts</h5>
+    </div>
+    <div class="col-md-1 text-right">
+      <button *ngIf="!editing" (click)="editing = true" class="btn btn-sm btn-default pull-right">Edit</button>
+      <button *ngIf="editing" (click)="editing = false" class="btn btn-sm btn-default pull-right">Done</button>
+    </div>
   </div>
   <div class="panel-body">
-    <p-dataTable *ngIf='accounts' [scrollable]="true" scrollHeight="200px" rowHover="true" [value]="accounts" (rowClick)="onRowClick($event)" (onEditComplete)="onEditComplete($event.data)" [editable]='true'>
+    <p-dataTable *ngIf='accounts' [scrollable]="true" scrollHeight="200px" rowHover="true" [value]="accounts" (rowClick)="onRowClick($event)" (onEditComplete)="onEditComplete($event.data)" [editable]='editing'>
       <p-column field="name" header="Name" [editable]="true"></p-column>
       <p-column field="bank" header="Bank" [editable]="true"></p-column>
       <p-column field="balance" header="Amount" styleClass="text-right"  [editable]="true">
@@ -11,7 +17,7 @@
           <span>{{ex['balance'] |  currency:'USD':true:'1.2-2' }}</span>
         </ng-template>
       </p-column>
-      <p-column [style]="{'width': '30px'}">
+      <p-column *ngIf="editing" [style]="{'width': '30px'}">
         <ng-template let-ex="rowData" pTemplate="header">
           <a (click)="onAdd()">
             <span class="glyphicon glyphicon-plus text-success"></span>

@@ -1,20 +1,31 @@
 import { AccountService } from "../../services/account.service";
 import { Component, OnInit } from '@angular/core';
 import { Account } from "../../sql/Account";
+import { Subscription } from "rxjs/Subscription";
+import { OnDestroy } from "@angular/core";
 
 @Component({
   selector: 'app-account-selector',
   templateUrl: './account-selector.component.html',
   styleUrls: ['./account-selector.component.css']
 })
-export class AccountSelectorComponent implements OnInit {
+export class AccountSelectorComponent implements OnInit, OnDestroy {
   accounts: Account[];
+  editing: boolean;
+  accountSubscription: Subscription
+
   constructor(private accountService: AccountService) { }
 
   ngOnInit() {
-    this.accountService.getAll().subscribe((accounts: Account[])=>{
+    console.log("initializing accounts");
+    this.accountSubscription = this.accountService.getAll().subscribe((accounts: Account[])=>{
+      console.log("accounts", accounts)
       this.accounts = accounts;
     });
+  }
+
+  ngOnDestroy(){
+    this.accountSubscription.unsubscribe(); 
   }
 
   onEditComplete(data){

@@ -20,6 +20,7 @@ export class ExpenseViewerComponent implements OnInit {
   categories;
   Date = Date;
   private accountId = 3;
+  @Input() account;
 
   constructor(
     private categoryService: CategoryService,
@@ -35,7 +36,7 @@ export class ExpenseViewerComponent implements OnInit {
       this.expenses = expenses; 
     })
 
-    this.categoryService.getAll().subscribe( (categories: Category[]) => {
+    this.categoryService.getAll().subscribe((categories: Category[]) => {
       this.categories = CategoryService.mapCategoriesForSelect(categories)
     });
   }

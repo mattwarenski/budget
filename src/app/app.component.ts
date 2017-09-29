@@ -9,11 +9,13 @@ import { Expense } from "./model/expense";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  showCategories: boolean;
+  showAccounts: boolean;
+  showStats: boolean;
 
   ngOnInit(): void {
+    this.showAccounts = true;
   }
-
-  title = 'app';
   
   constructor(private sqlService: SqlService){ }
 }
