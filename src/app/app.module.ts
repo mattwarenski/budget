@@ -1,4 +1,3 @@
-import { ExpenseService } from "./services/expense.service";
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
@@ -29,7 +28,12 @@ import { LayoutService } from "./services/layout.service";
     FormsModule,
     BrowserAnimationsModule
   ],
-  providers: [SqlService, CategoryService, ExpenseService, AccountService, LayoutService],
+  providers: [
+    SqlService,
+    CategoryService,
+    AccountService,
+    LayoutService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

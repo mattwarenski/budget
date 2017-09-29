@@ -9,29 +9,23 @@ export class AbstractTableService<T extends RowEntity> {
   entities: T[] = [];
   private sqlService: SqlService;
   private currentEntities: BehaviorSubject<T[]>;
+  private entityConstructor;
 
   constructor(entityConstructor, sqlService: SqlService) {
     this.sqlService = sqlService;
     this.currentEntities = new BehaviorSubject<T[]>([]); 
+    this.entityConstructor = entityConstructor;
+    //this.getRows();
+  }
+
+  getAll(filter?: T): BehaviorSubject<T[]>{
     this.sqlService.getDB().subscribe(
       db => {
         //concat so if the array is modified before this returns no changes are lost
-        this.entities = db.getRows(new entityConstructor()).concat(this.entities); 
+        this.entities = db.getRows(filter ? filter : new this.entityConstructor()).concat(this.entities); 
         this.currentEntities.next(this.entities);
       }); 
-  }
-
-  getAll(): BehaviorSubject<T[]>{
     return this.currentEntities;  
-  }
-
-  getRows(filter: T): Observable<T[]>{
-    return Observable.create((observer: Observer<T[]>) => {
-      this.sqlService.getDB().subscribe(
-        db => {
-          observer.next(db.getRows(filter));
-        });
-    }).take(1);
   }
 
   upsertRow(entity: T): void{

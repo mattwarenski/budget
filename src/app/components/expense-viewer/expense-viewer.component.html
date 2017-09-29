@@ -9,6 +9,7 @@
         </ng-template>
     </p-column>
     <p-column field="name" header="Name" [editable]="true"></p-column>
+    <p-column field="description" header="Description" [editable]="true"></p-column>
     <p-column field="categoryId" header="Category" [editable]="false" [style]="{'overflow':'visible'}">
       <ng-template let-col let-ex="rowData" pTemplate='body'>
         <p-dropdown [filter]='true' [(ngModel)]='ex[col.field]' (onChange)="onEditComplete(ex)" [options]='categories' [style]="{'width': '100%'}"></p-dropdown>

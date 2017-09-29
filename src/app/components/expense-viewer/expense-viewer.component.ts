@@ -1,5 +1,6 @@
 import { Input, Component, OnInit } from '@angular/core';
 import { Expense } from "../../model/expense";
+import { Account } from "../../sql/Account";
 import {DropdownModule, DataTableModule, SharedModule} from 'primeng/primeng';
 import { CurrencyPipe } from '@angular/common';
 import { SqlService } from "../../services/sql.service";
@@ -11,7 +12,8 @@ import { ExpenseService } from "../../services/expense.service";
 @Component({
   selector: 'app-expense-viewer',
   templateUrl: './expense-viewer.component.html',
-  styleUrls: ['./expense-viewer.component.css']
+  styleUrls: ['./expense-viewer.component.css'],
+  providers: [ExpenseService]
 })
 export class ExpenseViewerComponent implements OnInit {
 
@@ -19,8 +21,7 @@ export class ExpenseViewerComponent implements OnInit {
   selectedRow;
   categories;
   Date = Date;
-  private accountId = 3;
-  @Input() account;
+  @Input() account: Account;
 
   constructor(
     private categoryService: CategoryService,
@@ -32,7 +33,9 @@ export class ExpenseViewerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.expenseService.getAll().subscribe((expenses: Expense[])=>{
+    let expenseModel = new Expense();
+    expenseModel.accountId = this.account.id;
+    this.expenseService.getAll(expenseModel).subscribe((expenses: Expense[])=>{
       this.expenses = expenses; 
     })
 
@@ -47,7 +50,7 @@ export class ExpenseViewerComponent implements OnInit {
 
   onAdd(){
     let newExpense = new Expense();
-    newExpense.accountId = this.accountId;
+    newExpense.accountId = this.account.id;
     newExpense.amount = 0;
     newExpense.name = "none"
     newExpense.categoryId = 2;

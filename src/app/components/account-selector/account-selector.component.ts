@@ -11,15 +11,14 @@ import { OnDestroy } from "@angular/core";
 })
 export class AccountSelectorComponent implements OnInit, OnDestroy {
   accounts: Account[];
+  selectedAccount: Account;
   editing: boolean;
   accountSubscription: Subscription
 
   constructor(private accountService: AccountService) { }
 
   ngOnInit() {
-    console.log("initializing accounts");
     this.accountSubscription = this.accountService.getAll().subscribe((accounts: Account[])=>{
-      console.log("accounts", accounts)
       this.accounts = accounts;
     });
   }
@@ -33,7 +32,8 @@ export class AccountSelectorComponent implements OnInit, OnDestroy {
   }
 
   onRowClick(account: Account){
-  
+    console.log("clicked", account);
+    this.selectedAccount = account; 
   }
 
   onAdd(){

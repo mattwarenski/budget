@@ -3,32 +3,36 @@
     <div class="col-md-11">
       <h5>Accounts</h5>
     </div>
-    <div class="col-md-1 text-right">
-      <button *ngIf="!editing" (click)="editing = true" class="btn btn-sm btn-default pull-right">Edit</button>
-      <button *ngIf="editing" (click)="editing = false" class="btn btn-sm btn-default pull-right">Done</button>
+      <div class="col-md-1 text-right">
+        <button *ngIf="!editing && !selectedAccount" (click)="editing = true" class="btn btn-sm btn-default pull-right">Edit</button>
+        <button *ngIf="editing && !selectedAccount" (click)="editing = false" class="btn btn-sm btn-default pull-right">Done</button>
+        <button *ngIf="selectedAccount" (click)="selectedAccount = null" class="btn btn-sm btn-default pull-right">Back</button>
     </div>
   </div>
-  <div class="panel-body">
-    <p-dataTable *ngIf='accounts' [scrollable]="true" scrollHeight="200px" rowHover="true" [value]="accounts" (rowClick)="onRowClick($event)" (onEditComplete)="onEditComplete($event.data)" [editable]='editing'>
-      <p-column field="name" header="Name" [editable]="true"></p-column>
-      <p-column field="bank" header="Bank" [editable]="true"></p-column>
-      <p-column field="balance" header="Amount" styleClass="text-right"  [editable]="true">
-        <ng-template let-col let-ex="rowData" pTemplate="body">
-          <span>{{ex['balance'] |  currency:'USD':true:'1.2-2' }}</span>
-        </ng-template>
-      </p-column>
-      <p-column *ngIf="editing" [style]="{'width': '30px'}">
-        <ng-template let-ex="rowData" pTemplate="header">
-          <a (click)="onAdd()">
-            <span class="glyphicon glyphicon-plus text-success"></span>
-          </a>
-        </ng-template>
-        <ng-template let-ex="rowData" pTemplate="body">
-          <a (click)="onDelete(ex)">
-            <span class="glyphicon glyphicon-trash text-danger"></span>
-          </a>
-        </ng-template>
-      </p-column>
-    </p-dataTable>
+  <app-expense-viewer *ngIf="selectedAccount" [account]="selectedAccount" ></app-expense-viewer>
+  <div *ngIf="!selectedAccount">
+    <div class="panel-body">
+      <p-dataTable *ngIf='accounts' [scrollable]="true" scrollHeight="200px" rowHover="true" [value]="accounts" (onRowClick)="onRowClick($event.data)" (onEditComplete)="onEditComplete($event.data)" [editable]='editing'>
+        <p-column field="name" header="Name" [editable]="true"></p-column>
+        <p-column field="bank" header="Bank" [editable]="true"></p-column>
+        <p-column field="balance" header="Amount" styleClass="text-right"  [editable]="true">
+          <ng-template let-col let-ex="rowData" pTemplate="body">
+            <span>{{ex['balance'] |  currency:'USD':true:'1.2-2' }}</span>
+          </ng-template>
+        </p-column>
+        <p-column *ngIf="editing" [style]="{'width': '30px'}">
+          <ng-template let-ex="rowData" pTemplate="header">
+            <a (click)="onAdd()">
+              <span class="glyphicon glyphicon-plus text-success"></span>
+            </a>
+          </ng-template>
+          <ng-template let-ex="rowData" pTemplate="body">
+            <a (click)="onDelete(ex)">
+              <span class="glyphicon glyphicon-trash text-danger"></span>
+            </a>
+          </ng-template>
+        </p-column>
+      </p-dataTable>
+    </div>
   </div>
 </div>
