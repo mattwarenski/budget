@@ -1,4 +1,4 @@
-<div class="panel panel-primary display-panel">
+<div class="panel panel-primary display-panel" [ngStyle]="{'margin' : '10px'}">
   <div class="panel-heading row">
     <div class="col-md-11">
       <h5>{{selectedAccount ? getExpenseHeader() : getAccountHeader()}}</h5>
@@ -17,7 +17,7 @@
         <p-column field="bank" header="Bank" [editable]="true"></p-column>
         <p-column field="balance" header="Amount" styleClass="text-right">
           <ng-template let-col let-ex="rowData" pTemplate="body">
-            <span>{{ex['balance'] |  currency:'USD':true:'1.2-2' }}</span>
+            <span [style.color]="ex['balance'] < 0 ? 'red' : 'green'">{{ex['balance'] |  currency:'USD':true:'1.2-2' }}</span>
           </ng-template>
         </p-column>
         <p-column *ngIf="editing" [style]="{'width': '30px'}">
