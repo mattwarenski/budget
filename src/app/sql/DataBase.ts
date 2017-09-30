@@ -62,7 +62,6 @@ export class DataBase{
       if(err){
         throw Error(`Unable to read DB from ${this.filepath}.\nMessage:${err}}`) 
       }
-      console.log('read data from ', this.filepath, data);
       this.db = new SQL.Database(data);
       this.updateSchema();
       cb();
@@ -130,7 +129,7 @@ export class DataBase{
       console.error("won't delete empty row (no where clause)", entity); 
     }
 
-    let vals = cols.map( c => entity[c])
+    let vals = cols.map( c => entity.getValue(c))
     let statment = `DELETE FROM ${entity.getTableName()} WHERE ${cols.map(c=>c+"=?").join(" AND ")}`;
     this.run(statment, vals);
   }

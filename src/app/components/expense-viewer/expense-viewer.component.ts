@@ -1,7 +1,7 @@
-import { Input, Component, OnInit } from '@angular/core';
+import { Input, Output, Component, OnInit, EventEmitter } from '@angular/core';
 import { Expense } from "../../model/expense";
 import { Account } from "../../sql/Account";
-import {DropdownModule, DataTableModule, SharedModule} from 'primeng/primeng';
+import { DropdownModule, DataTableModule, SharedModule } from 'primeng/primeng';
 import { CurrencyPipe } from '@angular/common';
 import { SqlService } from "../../services/sql.service";
 import { DataBase } from "../../sql/DataBase";
@@ -22,14 +22,21 @@ export class ExpenseViewerComponent implements OnInit {
   categories;
   Date = Date;
   @Input() account: Account;
+  @Output() onTransaction = new EventEmitter();
 
   constructor(
     private categoryService: CategoryService,
     private expenseService: ExpenseService
   ) { }
 
-  onEditComplete(data){
-    this.expenseService.upsertRow(data);
+  onEditComplete(event){
+    this.expenseService.upsertRow(event.data);
+    if(event.column.field === 'amount'){
+      let total = this.expenses.reduce((total: number, expense: Expense)=>{
+        return total + (+expense.amount);
+      }, 0);
+      this.onTransaction.emit(total); 
+    }
   }
 
   ngOnInit() {
@@ -37,7 +44,7 @@ export class ExpenseViewerComponent implements OnInit {
     expenseModel.accountId = this.account.id;
     this.expenseService.getAll(expenseModel).subscribe((expenses: Expense[])=>{
       this.expenses = expenses; 
-    })
+    });
 
     this.categoryService.getAll().subscribe((categories: Category[]) => {
       this.categories = CategoryService.mapCategoriesForSelect(categories)
@@ -56,7 +63,7 @@ export class ExpenseViewerComponent implements OnInit {
     newExpense.categoryId = 2;
 
     newExpense.date = this.expenses.length > 0 ? this.expenses[this.expenses.length - 1].date : new Date();
-    this.expenses = [newExpense, ...this.expenses];
+    //this.expenses = [newExpense, ...this.expenses];
     this.expenseService.upsertRow(newExpense);
   }
 

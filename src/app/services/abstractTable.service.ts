@@ -48,7 +48,9 @@ export class AbstractTableService<T extends RowEntity> {
       (db: DataBase) => {
         db.deleteRow(category);
         let index = this.entities.findIndex( c => category.id === c.id);
+        console.log("b", this.entities);
         this.entities.splice(index, 1);
+        console.log("a", this.entities);
         this.currentEntities.next(this.entities);
       });
   }

@@ -7,7 +7,13 @@ import { OnDestroy } from "@angular/core";
 @Component({
   selector: 'app-account-selector',
   templateUrl: './account-selector.component.html',
-  styleUrls: ['./account-selector.component.css']
+  styles: [`
+      .display_panel{
+        position: absolute;
+        margin: 20px;
+        height: 100%;
+      }
+   `]
 })
 export class AccountSelectorComponent implements OnInit, OnDestroy {
   accounts: Account[];
@@ -32,8 +38,22 @@ export class AccountSelectorComponent implements OnInit, OnDestroy {
   }
 
   onRowClick(account: Account){
-    console.log("clicked", account);
     this.selectedAccount = account; 
+  }
+
+  //When a new amount is received from the expense emitter
+  onAccountAmmount(amount){
+    this.selectedAccount.balance = amount;
+    this.accountService.upsertRow(this.selectedAccount);
+  }
+
+  getAccountHeader(){
+    let total = this.accounts.reduce((total: number, current: Account) => total + (+current.balance), 0);
+    return `Accounts: $${total}` 
+  }
+
+  getExpenseHeader(){
+    return `${this.selectedAccount.name}: $${this.selectedAccount.balance}` 
   }
 
   onAdd(){

@@ -38,7 +38,11 @@ export abstract class RowEntity{
   }
 
   getValues(): any[]{
-    return this.columns.map( c => this.formatObject(this[c.getName()]));
+    return this.columns.map( c => this.getValue(c.getName()));
+  }
+
+  getValue(key: string){
+    return this.formatObject(this[key]) 
   }
 
   private formatObject(prop: any){
