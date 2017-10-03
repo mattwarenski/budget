@@ -48,10 +48,11 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
     expenseModel.accountId = this.account.id;
     this.expenseSubscription = this.expenseService.getAll(expenseModel).subscribe((expenses: Expense[])=>{
       this.expenses = expenses; 
+      console.log("expenses updated", this.expenses);
     });
 
     this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[]) => {
-      this.categories = CategoryService.mapCategoriesForSelect(categories)
+      this.categories = [{'label' : 'Uncategorized', 'value' : 0}].concat(CategoryService.mapCategoriesForSelect(categories));
     });
   }
 
@@ -69,10 +70,9 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
     newExpense.accountId = this.account.id;
     newExpense.amount = 0;
     newExpense.name = "none"
-    newExpense.categoryId = 2;
+    newExpense.categoryId = 0;
 
     newExpense.date = this.expenses.length > 0 ? this.expenses[this.expenses.length - 1].date : new Date();
-    //this.expenses = [newExpense, ...this.expenses];
     this.expenseService.upsertRow(newExpense);
   }
 

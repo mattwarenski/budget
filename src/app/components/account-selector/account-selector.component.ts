@@ -39,6 +39,7 @@ export class AccountSelectorComponent implements OnInit, OnDestroy {
 
   onRowClick(account: Account){
     this.selectedAccount = account; 
+    this.editing = false;
   }
 
   //When a new amount is received from the expense emitter

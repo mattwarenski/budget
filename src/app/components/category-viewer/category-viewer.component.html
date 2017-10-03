@@ -20,31 +20,38 @@
           <a><span (click)="removeCategory()" class="glyphicon glyphicon-trash text-danger"></span></a>
         </div>
       </div>
-      <div *ngIf="selectedCategory">
-        <div class="form-group">
-          <label for="name-input">Name:</label>
-          <input class="input-sm form-control"
-                 id="name-input"
-                 (change)="updateCategory()"
-                 [(ngModel)]="selectedCategory.name">
+      <div *ngIf="selectedCategory" class="row" [ngStyle]="{'margin-left' : '30px', 'padding-top' : '10px'}">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="name-input">Name:</label>
+            <input class="input-sm form-control"
+                   id="name-input"
+                   (change)="updateCategory()"
+                   [(ngModel)]="selectedCategory.name">
+          </div>
+          <div class="form-group">
+            <label for="amount-input">Amount:</label>
+            <input class="input-sm form-control"
+                   id="amount-input"
+                   (change)="updateCategory()"
+                   [(ngModel)]="selectedCategory.budgetAmount">
+          </div>
+          <div class="form-group col-xs-5">
+            <label for="parent-category-select">Parent Category:</label>
+            <p-dropdown
+                   [options]="parentCategories"
+                   [(ngModel)]="selectedCategory.parentId"
+                   (onChange)="updateCategory($event)"
+                   [ngModel]="selectedCategory?.parentId"
+                   [disabled]="isParentCategory()"
+                   [style]="{'min-width' : '140px'}"
+                   id="parent-category-select"></p-dropdown>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="amount-input">Amount:</label>
-          <input class="input-sm form-control"
-                 id="amount-input"
-                 (change)="updateCategory()"
-                 [(ngModel)]="selectedCategory.budgetAmount">
-        </div>
-        <div class="form-group">
-          <label for="parent-category-select">Parent Category:</label>
-          <p-dropdown
-                 [options]="parentCategories"
-                 [(ngModel)]="selectedCategory.parentId"
-                 (onChange)="updateCategory($event)"
-                 [ngModel]="selectedCategory?.parentId"
-                 [disabled]="isParentCategory()"
-                 [style]="{'min-width' : '140px'}"
-                 id="parent-category-select"></p-dropdown>
+        <div class="col-md-4">
+          <p>
+            <b>Total Spent:</b> {{selectedCategory.total}}
+          </p>
         </div>
       </div>
     </div>
