@@ -1,4 +1,4 @@
-import { Input, Output, Component, OnInit, EventEmitter } from '@angular/core';
+import { Input, Output, Component, OnInit, OnDestroy, EventEmitter } from '@angular/core';
 import { Expense } from "../../model/expense";
 import { Account } from "../../sql/Account";
 import { DropdownModule, DataTableModule, SharedModule } from 'primeng/primeng';
@@ -8,6 +8,7 @@ import { DataBase } from "../../sql/DataBase";
 import { Category } from "../../model/category";
 import { CategoryService } from "../../services/category.service";
 import { ExpenseService } from "../../services/expense.service";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
   selector: 'app-expense-viewer',
@@ -15,11 +16,13 @@ import { ExpenseService } from "../../services/expense.service";
   styleUrls: ['./expense-viewer.component.css'],
   providers: [ExpenseService]
 })
-export class ExpenseViewerComponent implements OnInit {
-
+export class ExpenseViewerComponent implements OnInit, OnDestroy {
+  expenseSubscription: Subscription;
+  categorySubscription: Subscription;
   expenses: Expense[];
   selectedRow;
   categories;
+  editing: boolean;
   Date = Date;
   @Input() account: Account;
   @Output() onTransaction = new EventEmitter();
@@ -36,19 +39,25 @@ export class ExpenseViewerComponent implements OnInit {
         return total + (+expense.amount);
       }, 0);
       this.onTransaction.emit(total); 
+      this.categoryService.updateTotal(event.data.categoryId)
     }
   }
 
   ngOnInit() {
     let expenseModel = new Expense();
     expenseModel.accountId = this.account.id;
-    this.expenseService.getAll(expenseModel).subscribe((expenses: Expense[])=>{
+    this.expenseSubscription = this.expenseService.getAll(expenseModel).subscribe((expenses: Expense[])=>{
       this.expenses = expenses; 
     });
 
-    this.categoryService.getAll().subscribe((categories: Category[]) => {
+    this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[]) => {
       this.categories = CategoryService.mapCategoriesForSelect(categories)
     });
+  }
+
+  ngOnDestroy(){
+    this.categorySubscription.unsubscribe();
+    this.expenseSubscription.unsubscribe();
   }
 
   onRowClick(e:any) {

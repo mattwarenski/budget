@@ -7,7 +7,13 @@
       <div class="form-inline">
         <div class="form-group">
           <label for="category-select">Category:</label>
-          <p-dropdown [options]="categoryList" (onChange)="onCategorySelect($event)" [ngModel]="selectedCategory?.id" [style]="{'min-width' : '140px'}" id="category-select" ></p-dropdown>
+          <p-dropdown
+                 [options]="categoryList"
+                 (onChange)="onCategorySelect($event)"
+                 [ngModel]="selectedCategory?.id"
+                 [style]="{'min-width' : '140px'}"
+                 id="category-select">
+          </p-dropdown>
         </div>
         <div class="form-group">
           <a><span (click)="addCategory()" class="glyphicon glyphicon-plus text-success"></span></a>
@@ -17,11 +23,28 @@
       <div *ngIf="selectedCategory">
         <div class="form-group">
           <label for="name-input">Name:</label>
-          <input class="input-sm form-control" id="name-input" (change)="updateCategory()" [(ngModel)]="selectedCategory.name">
+          <input class="input-sm form-control"
+                 id="name-input"
+                 (change)="updateCategory()"
+                 [(ngModel)]="selectedCategory.name">
         </div>
         <div class="form-group">
           <label for="amount-input">Amount:</label>
-          <input class="input-sm form-control" id="amount-input" (change)="updateCategory()" [(ngModel)]="selectedCategory.budgetAmount">
+          <input class="input-sm form-control"
+                 id="amount-input"
+                 (change)="updateCategory()"
+                 [(ngModel)]="selectedCategory.budgetAmount">
+        </div>
+        <div class="form-group">
+          <label for="parent-category-select">Parent Category:</label>
+          <p-dropdown
+                 [options]="parentCategories"
+                 [(ngModel)]="selectedCategory.parentId"
+                 (onChange)="updateCategory($event)"
+                 [ngModel]="selectedCategory?.parentId"
+                 [disabled]="isParentCategory()"
+                 [style]="{'min-width' : '140px'}"
+                 id="parent-category-select"></p-dropdown>
         </div>
       </div>
     </div>

@@ -13,10 +13,13 @@ export class Category extends RowEntity{
   name: string;
 
   @Column(DataType.INTEGER)
-  parentId: string;
+  parentId: number;
 
   @Column(DataType.DECIMAL ,Constraint.NOT_NULL)
   budgetAmount: number; 
+
+  @Column(DataType.DECIMAL)
+  total: number; 
 
   //TODO Implement durations
 }

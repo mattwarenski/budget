@@ -7,6 +7,7 @@ import { Observer } from "rxjs/Observer";
 
 export class AbstractTableService<T extends RowEntity> {
   entities: T[] = [];
+  private fetchedFromDb: boolean;
   private sqlService: SqlService;
   private currentEntities: BehaviorSubject<T[]>;
   private entityConstructor;
@@ -15,14 +16,16 @@ export class AbstractTableService<T extends RowEntity> {
     this.sqlService = sqlService;
     this.currentEntities = new BehaviorSubject<T[]>([]); 
     this.entityConstructor = entityConstructor;
-    //this.getRows();
   }
 
   getAll(filter?: T): BehaviorSubject<T[]>{
     this.sqlService.getDB().subscribe(
       db => {
         //concat so if the array is modified before this returns no changes are lost
-        this.entities = db.getRows(filter ? filter : new this.entityConstructor()).concat(this.entities); 
+        if(!this.fetchedFromDb){
+          this.entities = db.getRows(filter ? filter : new this.entityConstructor()).concat(this.entities); 
+          this.fetchedFromDb = true;
+        }
         this.currentEntities.next(this.entities);
       }); 
     return this.currentEntities;  
