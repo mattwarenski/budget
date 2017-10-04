@@ -7,6 +7,7 @@ import { Observer } from "rxjs/Observer";
 
 export class AbstractTableService<T extends RowEntity> {
   entities: T[] = [];
+  private filter: T;
   private fetchedFromDb: boolean;
   private sqlService: SqlService;
   private currentEntities: BehaviorSubject<T[]>;
@@ -19,11 +20,12 @@ export class AbstractTableService<T extends RowEntity> {
   }
 
   getAll(filter?: T): BehaviorSubject<T[]>{
-    this.sqlService.getDB().subscribe(
+    this.filter = filter;
+    this.sqlService.getDB(
       db => {
         //concat so if the array is modified before this returns no changes are lost
         if(!this.fetchedFromDb){
-          this.entities = db.getRows(filter ? filter : new this.entityConstructor()).concat(this.entities); 
+          this.entities = this.getRows(db).concat(this.entities);
           this.fetchedFromDb = true;
         }
         this.currentEntities.next(this.entities);
@@ -31,29 +33,33 @@ export class AbstractTableService<T extends RowEntity> {
     return this.currentEntities;  
   }
 
+  private getRows(db: DataBase){
+    return db.getRows(this.filter ? this.filter : new this.entityConstructor()); 
+  }
+
   upsertRow(entity: T): void{
-    this.sqlService.getDB().subscribe(
-      (db: DataBase) => {
-        let currentIndex = this.entities.findIndex( c => c.id === entity.id); 
-        if(currentIndex < 0){
-          this.entities.push(entity);
-        }
-        else{
-          this.entities[currentIndex] = entity; 
-        }
-        db.upsert(entity);
-        this.currentEntities.next(this.entities);
-      });
+      this.sqlService.getDB(
+        (db: DataBase) => {
+          db.upsert(entity);
+          console.log("upserting", entity);
+          let currentIndex = this.entities.findIndex( c => entity.id && c.id === entity.id); 
+          if(currentIndex < 0){
+            //get from db so that assigned db id shows up
+            this.entities = this.getRows(db);
+          }
+          else{
+            this.entities[currentIndex] = entity; 
+          }
+          this.currentEntities.next(this.entities);
+        });
   }
 
   deleteRow(category: T): void{
-    this.sqlService.getDB().subscribe(
+    this.sqlService.getDB(
       (db: DataBase) => {
         db.deleteRow(category);
         let index = this.entities.findIndex( c => category.id === c.id);
-        console.log("b", this.entities);
         this.entities.splice(index, 1);
-        console.log("a", this.entities);
         this.currentEntities.next(this.entities);
       });
   }

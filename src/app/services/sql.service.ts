@@ -25,8 +25,13 @@ export class SqlService {
     });
   }
 
-  getDB(): AsyncSubject<DataBase>{
-    return this.initSubject; 
+  getDB(callback){
+    let sub = this.initSubject.
+      subscribe(
+        callback,
+        err => console.error("Error in database", err),
+        () => sub ? sub.unsubscribe() : null
+      );
   }
 }
 

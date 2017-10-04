@@ -19,7 +19,8 @@ export class CategoryService extends AbstractTableService<Category> {
   }
 
   updateTotal(categoryId: number){
-    this.__sqlService.getDB().subscribe((db: DataBase)=> {
+    this.__sqlService.getDB(
+      (db: DataBase)=> {
       let filter = new Expense();
       filter.categoryId = categoryId;
       let total = db.getRows(filter).reduce((total: number, current: Expense)=> total + (+current.amount),0);  

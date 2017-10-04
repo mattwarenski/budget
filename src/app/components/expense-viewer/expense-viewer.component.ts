@@ -19,7 +19,7 @@ import { Subscription } from "rxjs/Subscription";
 export class ExpenseViewerComponent implements OnInit, OnDestroy {
   expenseSubscription: Subscription;
   categorySubscription: Subscription;
-  expenses: Expense[];
+  expenses: Expense[] = [];
   selectedRow;
   categories;
   editing: boolean;
@@ -29,11 +29,10 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
 
   constructor(
     private categoryService: CategoryService,
-    private expenseService: ExpenseService
+    private expenseService: ExpenseService,
   ) { }
 
   onEditComplete(event){
-    this.expenseService.upsertRow(event.data);
     if(event.column.field === 'amount'){
       let total = this.expenses.reduce((total: number, expense: Expense)=>{
         return total + (+expense.amount);
@@ -41,13 +40,15 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
       this.onTransaction.emit(total); 
       this.categoryService.updateTotal(event.data.categoryId)
     }
+    this.expenseService.upsertRow(event.data);
   }
 
   ngOnInit() {
     let expenseModel = new Expense();
     expenseModel.accountId = this.account.id;
     this.expenseSubscription = this.expenseService.getAll(expenseModel).subscribe((expenses: Expense[])=>{
-      this.expenses = expenses; 
+      this.expenses = [];
+      this.expenses = this.expenses.concat(expenses);
       console.log("expenses updated", this.expenses);
     });
 
