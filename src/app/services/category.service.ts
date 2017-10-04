@@ -21,12 +21,15 @@ export class CategoryService extends AbstractTableService<Category> {
   updateTotal(categoryId: number){
     this.__sqlService.getDB(
       (db: DataBase)=> {
-      let filter = new Expense();
-      filter.categoryId = categoryId;
-      let total = db.getRows(filter).reduce((total: number, current: Expense)=> total + (+current.amount),0);  
-      let category = this.entities.find( e => e.id === categoryId);
-      category.total = total;
-      this.upsertRow(category);
-    });
+        let category = this.entities.find( e => e.id === categoryId);
+        if(!category){
+          return;
+        }
+        let filter = new Expense();
+        filter.categoryId = categoryId;
+        let total = db.getRows(filter).reduce((total: number, current: Expense)=> total + (+current.amount),0);  
+        category.total = total;
+        this.upsertRow(category);
+      });
   }
 }

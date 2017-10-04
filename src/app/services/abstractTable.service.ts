@@ -41,7 +41,6 @@ export class AbstractTableService<T extends RowEntity> {
       this.sqlService.getDB(
         (db: DataBase) => {
           db.upsert(entity);
-          console.log("upserting", entity);
           let currentIndex = this.entities.findIndex( c => entity.id && c.id === entity.id); 
           if(currentIndex < 0){
             //get from db so that assigned db id shows up

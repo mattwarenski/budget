@@ -9,6 +9,7 @@ import { Category } from "../../model/category";
 import { CategoryService } from "../../services/category.service";
 import { ExpenseService } from "../../services/expense.service";
 import { Subscription } from "rxjs/Subscription";
+import { DataTable } from 'primeng/components/datatable/datatable';
 
 @Component({
   selector: 'app-expense-viewer',
@@ -33,23 +34,25 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
   ) { }
 
   onEditComplete(event){
-    if(event.column.field === 'amount'){
+    if(event.column && event.column.field === 'amount'){
       let total = this.expenses.reduce((total: number, expense: Expense)=>{
         return total + (+expense.amount);
       }, 0);
       this.onTransaction.emit(total); 
       this.categoryService.updateTotal(event.data.categoryId)
     }
-    this.expenseService.upsertRow(event.data);
+    let data = event instanceof Expense ? event : event.data;
+    this.expenseService.upsertRow(data);
   }
 
   ngOnInit() {
     let expenseModel = new Expense();
     expenseModel.accountId = this.account.id;
     this.expenseSubscription = this.expenseService.getAll(expenseModel).subscribe((expenses: Expense[])=>{
+      //sort by date then id so that newest on is always on top
+      let sorted = expenses.sort((a: Expense, b: Expense) => (+b.date) - (+a.date) || b.id - a.id);
       this.expenses = [];
-      this.expenses = this.expenses.concat(expenses);
-      console.log("expenses updated", this.expenses);
+      this.expenses = this.expenses.concat(sorted);
     });
 
     this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[]) => {
@@ -73,7 +76,7 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
     newExpense.name = "none"
     newExpense.categoryId = 0;
 
-    newExpense.date = this.expenses.length > 0 ? this.expenses[this.expenses.length - 1].date : new Date();
+    newExpense.date = this.expenses.length ? this.expenses[0].date : new Date();
     this.expenseService.upsertRow(newExpense);
   }
 
