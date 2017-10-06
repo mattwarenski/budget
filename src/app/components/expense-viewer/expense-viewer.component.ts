@@ -39,7 +39,6 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
         return total + (+expense.amount);
       }, 0);
       this.onTransaction.emit(total); 
-      this.categoryService.updateTotal(event.data.categoryId)
     }
     let data = event instanceof Expense ? event : event.data;
     this.expenseService.upsertRow(data);

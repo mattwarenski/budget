@@ -17,7 +17,7 @@ import { LayoutService } from "./services/layout.service";
     AppComponent,
     ExpenseViewerComponent,
     CategoryViewerComponent,
-    AccountSelectorComponent
+    AccountSelectorComponent,
   ],
   imports: [
     BrowserModule, 
@@ -32,7 +32,7 @@ import { LayoutService } from "./services/layout.service";
     SqlService,
     CategoryService,
     AccountService,
-    LayoutService
+    LayoutService,
   ],
   bootstrap: [AppComponent]
 })

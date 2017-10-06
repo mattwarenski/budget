@@ -2,6 +2,8 @@ import { Category } from "../../model/category";
 import { CategoryService } from "../../services/category.service";
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from "rxjs/Subscription";
+import { TermDropdownLabels } from '../../model/budgetTerm';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-category-viewer',
@@ -14,8 +16,10 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
   categories: any[];
   parentCategories: any[];
   categoryList: any[];
+  terms = TermDropdownLabels;
   selectedCategory: Category;
   categorySubscription: Subscription;
+  currentCategoryTotal: Observable<number>;
 
   ngOnInit() {
     this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[])=>{
@@ -24,6 +28,7 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
       if(this.categories.length){
         if(!this.selectedCategory){
           this.selectedCategory = this.categories[0]; 
+          this.updateCategoryTotal();
         }
         this.parentCategories = this.getParentCategories();
       }
@@ -78,5 +83,11 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
 
   onCategorySelect(event){
     this.selectedCategory = this.categories.find( c => c.id === event.value);
+    this.updateCategoryTotal();
   }
+
+  private updateCategoryTotal(){
+    this.currentCategoryTotal = Observable.fromPromise(this.categoryService.getTotal(this.selectedCategory,0));
+  }
+
 }

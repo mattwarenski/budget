@@ -1,18 +1,22 @@
 <div class="form-group">
-  <p-dataTable  #table *ngIf='categories' [scrollable]="true" scrollHeight="2000px"
-    [value]="expenses"
-    (rowClick)="onRowClick($event)"
-    (onEditComplete)="editing=false; onEditComplete($event)"
-    (onEditInit)="editing=true"
-    (onEditCancel)="editing=false"
-    [editable]='true'>
+  <p-dataTable
+     *ngIf='categories'
+     [scrollable]="true"
+     [style]="{'min-height' : '250px'}"
+     scrollHeight="2000px"
+     [value]="expenses"
+     (rowClick)="onRowClick($event)"
+     (onEditComplete)="editing=false; onEditComplete($event)"
+     (onEditInit)="editing=true"
+     (onEditCancel)="editing=false"
+     [editable]='true'>
     <p-column field="date"  [style]=" {'overflow':'visible' }" header="Date" [editable]="true">
-       <ng-template let-col let-ex="rowData" pTemplate="body">
-             {{ex[col.field] | date}}
-        </ng-template>
-        <ng-template let-col let-ex="rowData" pTemplate="editor">
-            <p-calendar (onSelect)="onEditComplete(ex)"	[(ngModel)]="ex[col.field]"></p-calendar>
-        </ng-template>
+      <ng-template let-col let-ex="rowData" pTemplate="body">
+        {{ex[col.field] | date}}
+      </ng-template>
+      <ng-template let-col let-ex="rowData" pTemplate="editor">
+        <p-calendar (onSelect)="onEditComplete(ex)"	[(ngModel)]="ex[col.field]"></p-calendar>
+      </ng-template>
     </p-column>
     <p-column field="name" header="Name" [editable]="true"></p-column>
     <p-column field="description" header="Description" [editable]="true"></p-column>
@@ -25,13 +29,13 @@
       </ng-template>
     </p-column>
     <p-column field="amount" header="Amount" styleClass="text-right" [editable]="true">
-        <ng-template let-col let-ex="rowData" pTemplate="body">
-          <span [style.color]="ex['amount'] < 0 ? 'red' : 'green'">{{ editing ? ex['amount'] : (ex['amount'] | currency:'USD':true:'1.2-2')}}</span>
-        </ng-template>
+      <ng-template let-col let-ex="rowData" pTemplate="body">
+        <span [style.color]="ex['amount'] < 0 ? 'red' : 'green'">{{ editing ? ex['amount'] : (ex['amount'] | currency:'USD':true:'1.2-2')}}</span>
+      </ng-template>
     </p-column>
     <p-column [style]="{'width': '30px'}">
       <ng-template let-ex="rowData" pTemplate="header">
-        <a (click)="onAdd(table)">
+        <a (click)="onAdd()">
           <span class="glyphicon glyphicon-plus text-success"></span>
         </a>
       </ng-template>

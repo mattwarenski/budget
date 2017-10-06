@@ -1,9 +1,7 @@
-<div class="panel panel-primary display-panel" [ngStyle]="{'margin' : '10px'}">
-  <div class="panel-heading row">
-    <div class="col-md-11">
-      <h5>{{selectedAccount ? getExpenseHeader() : getAccountHeader()}}</h5>
-    </div>
-      <div class="col-md-1 text-right">
+<div class="panel panel-primary comp-frame">
+  <div class="panel-heading clearfix">
+      <h5 class="pull-left">{{selectedAccount ? getExpenseHeader() : getAccountHeader()}}</h5>
+      <div class="btn-group pull-right">
         <button *ngIf="!editing && !selectedAccount" (click)="editing = true" class="btn btn-sm btn-default pull-right">Edit</button>
         <button *ngIf="editing && !selectedAccount" (click)="editing = false" class="btn btn-sm btn-default pull-right">Done</button>
         <button *ngIf="selectedAccount" (click)="selectedAccount = null" class="btn btn-sm btn-default pull-right">Back</button>

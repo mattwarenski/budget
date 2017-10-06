@@ -1,1 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+
+.comp-frame{
+  /*position: absolute;*/
+  margin: 10px;
+  height: 100%;
+}

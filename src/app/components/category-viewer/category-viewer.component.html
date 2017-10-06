@@ -1,4 +1,4 @@
-<div class="panel panel-primary">
+<div class="panel panel-primary comp-frame">
   <div class="panel-heading">
     <h5>Categories:</h5>
   </div>
@@ -36,13 +36,21 @@
                    (change)="updateCategory()"
                    [(ngModel)]="selectedCategory.budgetAmount">
           </div>
-          <div class="form-group col-xs-5">
-            <label for="parent-category-select">Parent Category:</label>
+          <div class="form-group">
+            <b>Term:</b><br>
+            <p-dropdown
+                   [options]="terms"
+                   [(ngModel)]="selectedCategory.term"
+                   (onChange)="updateCategory($event)"
+                   [style]="{'min-width' : '140px'}"
+                   id="term-select"></p-dropdown>
+          </div>
+          <div class="form-group">
+            <b>Parent Category:</b><br>
             <p-dropdown
                    [options]="parentCategories"
                    [(ngModel)]="selectedCategory.parentId"
                    (onChange)="updateCategory($event)"
-                   [ngModel]="selectedCategory?.parentId"
                    [disabled]="isParentCategory()"
                    [style]="{'min-width' : '140px'}"
                    id="parent-category-select"></p-dropdown>
@@ -50,7 +58,8 @@
         </div>
         <div class="col-md-4">
           <p>
-            <b>Total Spent:</b> {{selectedCategory.total}}
+            <b>Total Spent:</b> {{(currentCategoryTotal | async ) | currency:'USD':true:'1.2-2' }}<br>
+            <b>Amount Left:</b> {{(selectedCategory.budgetAmount + (currentCategoryTotal | async )) | currency:'USD':true:'1.2-2' }}
           </p>
         </div>
       </div>

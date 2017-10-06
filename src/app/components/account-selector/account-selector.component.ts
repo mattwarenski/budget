@@ -7,13 +7,6 @@ import { OnDestroy } from "@angular/core";
 @Component({
   selector: 'app-account-selector',
   templateUrl: './account-selector.component.html',
-  styles: [`
-      .display_panel{
-        position: absolute;
-        margin: 20px;
-        height: 100%;
-      }
-   `]
 })
 export class AccountSelectorComponent implements OnInit, OnDestroy {
   accounts: Account[];

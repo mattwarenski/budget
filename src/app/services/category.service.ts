@@ -5,9 +5,14 @@ import { SqlService } from "./sql.service";
 import { DataBase } from "../sql/DataBase";
 import { AbstractTableService } from "./abstractTable.service";
 import { Expense } from "../model/expense";
+import { TermUtils } from '../model/budgetTerm';
+import { DBFilter } from '../sql/DBFilter';
 
 @Injectable()
 export class CategoryService extends AbstractTableService<Category> {
+  db: DataBase;
+
+
   constructor(private __sqlService: SqlService) {
     super(Category, __sqlService);
   }
@@ -18,18 +23,34 @@ export class CategoryService extends AbstractTableService<Category> {
     });
   }
 
-  updateTotal(categoryId: number){
-    this.__sqlService.getDB(
-      (db: DataBase)=> {
-        let category = this.entities.find( e => e.id === categoryId);
-        if(!category){
-          return;
-        }
-        let filter = new Expense();
-        filter.categoryId = categoryId;
-        let total = db.getRows(filter).reduce((total: number, current: Expense)=> total + (+current.amount),0);  
-        category.total = total;
-        this.upsertRow(category);
-      });
+  getTotal(category: Category, termDelta: number): Promise<number> {
+    return new Promise((resolve)=>{
+      if(!this.db){
+        this.__sqlService.getDB(
+          (db: DataBase)=> {
+            this.db = db;
+            let total = this.calculateTotal(category);
+            resolve(total);
+          });
+      }
+      else{
+        let total = this.calculateTotal(category);
+        resolve(total);
+      }
+    });
+  }
+
+  private calculateTotal(category: Category): number{
+    let dbFilter = new DBFilter();
+    dbFilter.earliestDate = TermUtils.getTermStartDate(category.term);
+    dbFilter.latestDate = TermUtils.getTermEndDate(category.term);
+    dbFilter.dateField = "date";
+    console.log(dbFilter);
+
+    let expense = new Expense();
+    expense.categoryId = category.id;
+    return this.db.getRows(expense, dbFilter)
+      .reduce((total: number, current: Expense)=> total + (+current.amount), 0);
+
   }
 }

@@ -1,5 +1,6 @@
 import { Column, DataType, Constraint } from "../sql/decorators";
 import { RowEntity } from "../sql/RowEntity";
+import { Term } from './budgetTerm';
 
 export class Category extends RowEntity{
   constructor(){
@@ -21,5 +22,6 @@ export class Category extends RowEntity{
   @Column(DataType.DECIMAL)
   total: number; 
 
-  //TODO Implement durations
+  @Column(DataType.VARCHAR)
+  term: Term;
 }
