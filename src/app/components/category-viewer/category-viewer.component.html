@@ -8,11 +8,23 @@
         <div class="form-group">
           <label for="category-select">Category:</label>
           <p-dropdown
+                 [filter]="true"
                  [options]="categoryList"
                  (onChange)="onCategorySelect($event)"
                  [ngModel]="selectedCategory?.id"
-                 [style]="{'min-width' : '140px'}"
+                 [style]="{'min-width' : '240px'}"
                  id="category-select">
+
+            <ng-template let-category pTemplate="item">
+              <div class="ui-helper-clearfix" style="position: relative;height: 20px;">
+                <div *ngIf="category.parent; else child">
+                  <b>{{category.label}}</b>
+                </div>
+                <ng-template #child>
+                  <div [ngStyle]="{'margin-left' : '15px'}">{{category.label}}</div>
+                </ng-template>
+              </div>
+            </ng-template>
           </p-dropdown>
         </div>
         <div class="form-group">

@@ -17,10 +17,38 @@ export class CategoryService extends AbstractTableService<Category> {
     super(Category, __sqlService);
   }
 
-  static mapCategoriesForSelect(categories: Category[]): any[]{
-    return categories.map(c => {
-      return { label : c.name, "value": c.id }
+  /**
+   * Returns category labels with parents sorted alphabetically and children sorted alphabetically after them
+   */
+  arrangeCategories(){
+    let childCategories = {};
+    this.entities.forEach((category: Category)=>{
+      if(category.parentId){
+        childCategories[category.parentId] ? childCategories[category.parentId].push(category) : childCategories[category.parentId] = [category];
+      }  
     });
+
+    let parentCategories =  this.sortAlphabetically(this.entities.filter(
+      (category: Category)=> !category.parentId && category.id));
+
+
+   let categories = [];
+   parentCategories.forEach((c: Category)=>{
+     categories.push({ label : c.name, "value": c.id, parent : true})
+     if(childCategories[c.id]){
+         let sorted = this.sortAlphabetically(childCategories[c.id])
+           .forEach( child => categories.push({ label : child.name, "value": child.id })) 
+     }
+   });
+    return categories;
+  }
+
+  private sortAlphabetically(catArr: Category[]){
+    return catArr.sort(function(a, b){
+      if(a.name < b.name) return -1;
+      if(a.name > b.name) return 1;
+      return 0;
+    })
   }
 
   getTotal(category: Category, termDelta: number): Promise<number> {
