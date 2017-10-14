@@ -15,7 +15,7 @@
         <p-column field="bank" header="Bank" [editable]="true"></p-column>
         <p-column field="balance" header="Amount" styleClass="text-right">
           <ng-template let-col let-ex="rowData" pTemplate="body">
-            <span [style.color]="ex['balance'] < 0 ? 'red' : 'green'">{{ex['balance'] |  currency:'USD':true:'1.2-2' }}</span>
+            <span [style.color]="ex['balance'] < 0 ? 'red' : 'green'">{{ex['balance'] |  safeCurrency }}</span>
           </ng-template>
         </p-column>
         <p-column *ngIf="editing" [style]="{'width': '30px'}">

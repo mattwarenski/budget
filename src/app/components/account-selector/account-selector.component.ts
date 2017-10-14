@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Account } from "../../sql/Account";
 import { Subscription } from "rxjs/Subscription";
 import { OnDestroy } from "@angular/core";
+import { SafeCurrencyPipe } from '../../pipes/safe-currency.pipe';
 
 @Component({
   selector: 'app-account-selector',
@@ -43,11 +44,13 @@ export class AccountSelectorComponent implements OnInit, OnDestroy {
 
   getAccountHeader(){
     let total = this.accounts.reduce((total: number, current: Account) => total + (+current.balance), 0);
-    return `Accounts: $${total}` 
+    total = new SafeCurrencyPipe().transform(total);
+    return `Accounts: ${total}` 
   }
 
   getExpenseHeader(){
-    return `${this.selectedAccount.name}: $${this.selectedAccount.balance}` 
+    let formattedBallance = new SafeCurrencyPipe().transform(this.selectedAccount.balance);
+    return `${this.selectedAccount.name}: ${formattedBallance}` 
   }
 
   onAdd(){

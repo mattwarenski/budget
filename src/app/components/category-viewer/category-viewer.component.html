@@ -13,6 +13,7 @@
                  (onChange)="onCategorySelect($event)"
                  [ngModel]="selectedCategory?.id"
                  [style]="{'min-width' : '240px'}"
+                 [disabled]="editingNew"
                  id="category-select">
 
             <ng-template let-category pTemplate="item">
@@ -70,8 +71,8 @@
         </div>
         <div class="col-md-4">
           <p>
-            <b>Total Spent:</b> {{(currentCategoryTotal | async ) | currency:'USD':true:'1.2-2' }}<br>
-            <b>Amount Left:</b> {{(selectedCategory.budgetAmount + (currentCategoryTotal | async )) | currency:'USD':true:'1.2-2' }}
+            <b>Total Spent:</b> {{(currentCategoryTotal | async ) | safeCurrency }}<br>
+            <b>Amount Left:</b> {{(selectedCategory.budgetAmount + (currentCategoryTotal | async ) | safeCurrency) }}
           </p>
         </div>
       </div>

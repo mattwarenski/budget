@@ -73,7 +73,6 @@ export class CategoryService extends AbstractTableService<Category> {
     dbFilter.earliestDate = TermUtils.getTermStartDate(category.term);
     dbFilter.latestDate = TermUtils.getTermEndDate(category.term);
     dbFilter.dateField = "date";
-    console.log(dbFilter);
 
     let expense = new Expense();
     expense.categoryId = category.id;

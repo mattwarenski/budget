@@ -6,10 +6,11 @@
     <ul class="nav navbar-nav">
       <li [class.active]="showAccounts"><a (click)="showAccounts = !showAccounts" class="navbar-brand glyphicon glyphicon-usd"> Accounts</a></li>
       <li [class.active]="showCategories"><a (click)="showCategories = !showCategories" class="navbar-brand glyphicon glyphicon-grain"> Budgets</a></li>
-      <li><a class="navbar-brand glyphicon glyphicon-dashboard"> Stats</a></li>
+      <li [class.active]="showStats"><a (click)="showStats = !showStats" class="navbar-brand glyphicon glyphicon-dashboard"> Stats</a></li>
     </ul>
   <!--</div>-->
 </nav>
 <app-category-viewer *ngIf="showCategories"></app-category-viewer>
+<app-budget-percentage-viewer *ngIf="showStats"></app-budget-percentage-viewer>
 <!--<app-expense-viewer></app-expense-viewer>-->
 <app-account-selector  *ngIf="showAccounts"></app-account-selector>

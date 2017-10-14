@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.showAccounts = true;
     this.showCategories = true;
+    this.showStats = true;
   }
   
   constructor(private sqlService: SqlService){ }

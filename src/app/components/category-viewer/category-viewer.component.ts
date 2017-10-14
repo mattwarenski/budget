@@ -20,6 +20,7 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
   selectedCategory: Category;
   categorySubscription: Subscription;
   currentCategoryTotal: Observable<number>;
+  editingNew: boolean;
 
   ngOnInit() {
     this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[])=>{
@@ -29,6 +30,9 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
         if(!this.selectedCategory){
           this.selectedCategory = this.categories[0]; 
           this.updateCategoryTotal();
+        }
+        else{
+          this.selectedCategory = this.categories.find( c => c.name === this.selectedCategory.name); 
         }
         this.parentCategories = this.getParentCategories();
       }
@@ -51,28 +55,39 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
   }
 
   updateCategory(){
-    this.categoryService.upsertRow(this.selectedCategory);
+    if(this.categoryValid()){
+      this.categoryService.upsertRow(this.selectedCategory);
+      this.editingNew = false;
+    }
+    else{
+      console.error("can't update category");  
+    }
+  }
+
+  private categoryValid(){
+    return this.selectedCategory.name !== null
+      && !(this.editingNew && this.categories.some( c => this.selectedCategory.name === c.name));
   }
 
   addCategory(){
     let category = new Category();
-    category.name = "new category";
     category.budgetAmount = 0;
     this.selectedCategory = category; 
-    this.categoryService.upsertRow(category);
+    this.editingNew = true;
   }
 
   removeCategory(){
+    //TODO: If the category it doesn't have an id
     if(!this.selectedCategory){
       console.warn("Can't delete. No selected category") 
       return;
     }
-    let index = this.categories.findIndex( c => c.id === this.selectedCategory.id);
     this.categoryService.deleteRow(this.selectedCategory); 
     if(!this.categories.length){
       this.selectedCategory = null; 
     }
     else{
+      let index = this.categories.findIndex( c => c.id === this.selectedCategory.id);
       this.selectedCategory = index - 1 < 0 ? this.categories[0] : this.categories[index - 1];
     }
   }
