@@ -1,7 +1,7 @@
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import { SqlService } from "./sql.service";
-import { DataBase } from "../sql/DataBase";
-import { RowEntity } from "../sql/RowEntity";
+import { DataBase } from "sqlite-base/DataBase";
+import { RowEntity } from "sqlite-base/RowEntity";
 import { Observable } from "rxjs/Observable";
 import { Observer } from "rxjs/Observer";
 

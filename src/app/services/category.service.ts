@@ -2,11 +2,11 @@ import { Subject } from "rxjs/Subject";
 import { Injectable } from '@angular/core';
 import { Category } from "../model/category";
 import { SqlService } from "./sql.service";
-import { DataBase } from "../sql/DataBase";
+import { DataBase } from "sqlite-base/DataBase";
 import { AbstractTableService } from "./abstractTable.service";
 import { Expense } from "../model/expense";
 import { TermUtils } from '../model/budgetTerm';
-import { DBFilter } from '../sql/DBFilter';
+import { DBFilter } from 'sqlite-base/DBFilter';
 
 @Injectable()
 export class CategoryService extends AbstractTableService<Category> {

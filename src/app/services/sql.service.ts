@@ -1,11 +1,12 @@
 import { environment } from "../../environments/environment";
 import { Injectable } from '@angular/core';
 import { Expense } from "../model/expense";
-import { DataBase } from "../sql/DataBase";
+import { createElectronDB } from "sqlite-base/ElectronDataBase";
 import { AsyncSubject } from "rxjs/AsyncSubject";
 import { NgZone } from "@angular/core";
 import { Category } from "../model/category";
 import { Account } from '../model/account';
+import { DataBase } from 'sqlite-base/DataBase';
 
 @Injectable()
 export class SqlService {
@@ -16,7 +17,7 @@ export class SqlService {
 
   constructor(private zone: NgZone) {
     this.initSubject = new AsyncSubject();
-    this.db = new DataBase(environment.dbLocation, [new Account(), new Expense(), new Category()]);
+    this.db = createElectronDB(environment.dbLocation, [new Account(), new Expense(), new Category()]);
     this.db.initDB(()=>{
       this.zone.run(()=>{
         this.initSubject.next(this.db)

@@ -1,5 +1,5 @@
-import { Column, DataType, Constraint } from "../sql/decorators";
-import { RowEntity } from "../sql/RowEntity";
+import { Column, DataType, Constraint } from "sqlite-base/decorators";
+import { RowEntity } from "sqlite-base/RowEntity";
 import { Term } from './budgetTerm';
 
 export class Category extends RowEntity{
