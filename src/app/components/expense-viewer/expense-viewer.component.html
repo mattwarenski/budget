@@ -22,7 +22,7 @@
     <p-column field="description" header="Description" [editable]="true"></p-column>
     <p-column field="categoryId" header="Category" [editable]="true" [style]="{'overflow':'visible'}">
       <ng-template let-col let-ex="rowData" pTemplate='body'>
-        <span>{{categories[ex['categoryId']].label}}</span>
+        <span>{{findCategory(ex['categoryId']).label}}</span>
       </ng-template>
       <ng-template let-col let-ex="rowData" pTemplate='editor'>
         <p-dropdown [filter]='true' [(ngModel)]='ex[col.field]' (onChange)="onEditComplete(ex)" [options]='categories' [style]="{'width': '100%'}"></p-dropdown>

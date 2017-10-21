@@ -82,4 +82,8 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
   onDelete(expense: Expense){
     this.expenseService.deleteRow(expense); 
   }
+
+  findCategory(id: string){
+    return this.categories.find( c => c.value === parseInt(id));
+  }
 }
