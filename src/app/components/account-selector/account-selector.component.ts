@@ -1,6 +1,6 @@
+import { Account } from '../../model/account';
 import { AccountService } from "../../services/account.service";
 import { Component, OnInit } from '@angular/core';
-import { Account } from "../../sql/Account";
 import { Subscription } from "rxjs/Subscription";
 import { OnDestroy } from "@angular/core";
 import { SafeCurrencyPipe } from '../../pipes/safe-currency.pipe';

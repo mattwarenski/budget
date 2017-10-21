@@ -5,7 +5,7 @@ import { DataBase } from "../sql/DataBase";
 import { AsyncSubject } from "rxjs/AsyncSubject";
 import { NgZone } from "@angular/core";
 import { Category } from "../model/category";
-import { Account } from "../sql/Account";
+import { Account } from '../model/account';
 
 @Injectable()
 export class SqlService {

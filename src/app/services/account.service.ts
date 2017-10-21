@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Account } from "../sql/Account";
 import { AbstractTableService } from "./abstractTable.service";
 import { SqlService } from "./sql.service";
+import { Account } from '../model/account';
 
 @Injectable()
 export class AccountService extends AbstractTableService<Account> {
