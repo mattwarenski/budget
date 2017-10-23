@@ -1,15 +1,15 @@
 import { Input, Output, Component, OnInit, OnDestroy, EventEmitter } from '@angular/core';
 import { Expense } from "../../model/expense";
-import { Account } from "../../sql/Account";
 import { DropdownModule, DataTableModule, SharedModule } from 'primeng/primeng';
 import { CurrencyPipe } from '@angular/common';
 import { SqlService } from "../../services/sql.service";
-import { DataBase } from "../../sql/DataBase";
+import { DataBase } from "sqlite-base/DataBase";
 import { Category } from "../../model/category";
 import { CategoryService } from "../../services/category.service";
 import { ExpenseService } from "../../services/expense.service";
 import { Subscription } from "rxjs/Subscription";
 import { DataTable } from 'primeng/components/datatable/datatable';
+import { Account } from '../../model/account';
 
 @Component({
   selector: 'app-expense-viewer',
