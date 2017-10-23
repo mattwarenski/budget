@@ -11,11 +11,17 @@ export class BudgetProgressBarComponent implements OnInit {
   @Input() amount: number;
   @Input() title: string;
   percentage: number;
+  budgetOver: boolean;
 
   constructor() { }
 
   ngOnInit() {
     this.percentage = Math.round((this.amount / this.total) * 100);
+    //this.percentage = 150;
+    if(this.percentage > 100){
+      this.percentage = 100;
+      this.budgetOver = true;
+    }
   }
 
 }
