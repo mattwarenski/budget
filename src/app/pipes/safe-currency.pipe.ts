@@ -9,7 +9,7 @@ export class SafeCurrencyPipe implements PipeTransform {
 
   transform(value: any): any {
     let safeVal = value ? value : 0;
-    safeVal = parseInt(safeVal.toString().replace(/[^\d.\-+]/, ''));
+    safeVal = parseFloat(safeVal.toString().replace(/[^\d.\-+]/, ''));
     return SafeCurrencyPipe.currencyPipe.transform(safeVal, 'USD', true, '1.2-2');
   }
 
