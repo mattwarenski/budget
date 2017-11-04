@@ -1,4 +1,4 @@
-<div class="form-group">
+<div class="form-group" (keydown.control.n)="onAdd()">
   <p-dataTable
      *ngIf='categories'
      [scrollable]="true"

@@ -24,7 +24,6 @@ export class BudgetPercentageViewerComponent implements OnInit {
           this.categoryMetadata = totals.map( (total, index) => {
             return { 'title' : categories[index].name, 'total' : categories[index].budgetAmount, 'amount' :  -total };
           });
-          console.log("cat map", this.categoryMetadata);
         });
     });
   }
