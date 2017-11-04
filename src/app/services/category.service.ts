@@ -7,6 +7,7 @@ import { AbstractTableService } from "./abstractTable.service";
 import { Expense } from "../model/expense";
 import { TermUtils } from '../model/budgetTerm';
 import { DBFilter } from 'sqlite-base/DBFilter';
+import * as moment from 'moment';
 
 @Injectable()
 export class CategoryService extends AbstractTableService<Category> {
@@ -51,33 +52,51 @@ export class CategoryService extends AbstractTableService<Category> {
     })
   }
 
-  getTotal(category: Category, termDelta: number): Promise<number> {
+  getRolloverTotal(category: Category): number{
+    let today = new Date();
+    if(category.rollOverStartDate > today){
+      console.error("Cannot determine roll over total for category. Start date in future", category);
+    }
+    //total from start until today
+    let total = this.calculateTotalByDate(category, category.rollOverStartDate, null); 
+    //1 for the current month since the current date - the current month would be 0
+    let numMonths = moment(today).diff(category.rollOverStartDate, 'months') + 1;
+    return (numMonths * category.budgetAmount) + total;
+  }
+
+  getTotal(category: Category, termDelta = 0): Promise<number> {
     return new Promise((resolve)=>{
       if(!this.db){
         this.__sqlService.getDB(
           (db: DataBase)=> {
             this.db = db;
-            let total = this.calculateTotal(category);
+            let total = this.calculateTotalByTerm(category, termDelta);
             resolve(total);
           });
       }
       else{
-        let total = this.calculateTotal(category);
+        let total = this.calculateTotalByTerm(category, termDelta);
         resolve(total);
       }
     });
   }
 
-  private calculateTotal(category: Category): number{
+  private calculateTotalByTerm(category: Category, termDelta: number): number{
+    let earliestDate = TermUtils.getTermStartDate(category.term);
+    let latestDate = TermUtils.getTermEndDate(category.term);
+    return this.calculateTotalByDate(category, earliestDate, latestDate);
+  }
+
+  private calculateTotalByDate(category: Category, earliestDate: Date, latestDate: Date): number{
     let dbFilter = new DBFilter();
-    dbFilter.earliestDate = TermUtils.getTermStartDate(category.term);
-    dbFilter.latestDate = TermUtils.getTermEndDate(category.term);
+    dbFilter.earliestDate = earliestDate;
+    dbFilter.latestDate = latestDate;
     dbFilter.dateField = "date";
 
     let expense = new Expense();
     expense.categoryId = category.id;
+
     return this.db.getRows(expense, dbFilter)
       .reduce((total: number, current: Expense)=> total + (+current.amount), 0);
-
   }
 }

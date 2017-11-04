@@ -24,4 +24,10 @@ export class Category extends RowEntity{
 
   @Column(DataType.VARCHAR)
   term: Term;
+
+  @Column(DataType.DATE)
+  rollOverStartDate: Date;
+
+  @Column(DataType.BOOLEAN)
+  isRollover: boolean;
 }

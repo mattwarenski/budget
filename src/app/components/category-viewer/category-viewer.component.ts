@@ -4,6 +4,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from "rxjs/Subscription";
 import { TermDropdownLabels } from '../../model/budgetTerm';
 import { Observable } from 'rxjs';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-category-viewer',
@@ -21,6 +22,7 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
   categorySubscription: Subscription;
   currentCategoryTotal: Observable<number>;
   editingNew: boolean;
+  moment = moment;
 
   ngOnInit() {
     this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[])=>{
@@ -54,6 +56,13 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
     return [{label : "None", value : 0}].concat(mappedCategories);
   }
 
+  onIsRolloverChange(){
+    if(!this.selectedCategory.rollOverStartDate || isNaN(this.selectedCategory.rollOverStartDate.getDate())){
+      this.selectedCategory.rollOverStartDate = new Date();
+    }
+    this.updateCategory();
+  }
+
   updateCategory(){
     if(this.categoryValid()){
       this.categoryService.upsertRow(this.selectedCategory);
@@ -63,6 +72,11 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
       console.error("can't update category");  
     }
   }
+
+  selectedCategoryHasRolloverDate(){
+    return this.selectedCategory.isRollover && moment(this.selectedCategory.rollOverStartDate).isValid();
+  }
+
 
   private categoryValid(){
     return this.selectedCategory.name !== null
@@ -79,7 +93,6 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
   removeCategory(){
     //TODO: If the category it doesn't have an id
     if(!this.selectedCategory){
-      console.warn("Can't delete. No selected category") 
       return;
     }
     this.categoryService.deleteRow(this.selectedCategory); 
