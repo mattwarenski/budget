@@ -56,6 +56,11 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
     return [{label : "None", value : 0}].concat(mappedCategories);
   }
 
+  updateRolloverStart(newDate: Date){
+    this.selectedCategory.rollOverStartDate = newDate; 
+    this.updateCategory();
+  }
+
   onIsRolloverChange(){
     if(!this.selectedCategory.rollOverStartDate || isNaN(this.selectedCategory.rollOverStartDate.getDate())){
       this.selectedCategory.rollOverStartDate = new Date();

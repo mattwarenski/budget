@@ -2,7 +2,7 @@
   <div class="panel-heading clearfix">
     <h5>Budget Progress</h5>
   </div>
-  <div class="panel-body" [ngStyle]='{ "max-height" : "300px", "overflow-y" : "auto"}'>
+  <div class="panel-body" [ngStyle]='{ "max-height" : "500px", "overflow-y" : "auto"}'>
     <div *ngFor="let category of categoryMetadata">
       <div *ngIf="category.total">
         <app-budget-progress-bar  [title]="category.title" [amount]="category.amount" [total]="category.total"></app-budget-progress-bar>

@@ -73,14 +73,13 @@
           </div>
           <div *ngIf="selectedCategory.isRollover && selectedCategory.rollOverStartDate" class="form-group">
             <b>Rollover Start Date:</b><br>
-            <p-calendar (change)="updateCategory()" [(ngModel)]="selectedCategory.rollOverStartDate"></p-calendar>
+            <app-month-selector (onSelect)="updateRolloverStart($event)" [selectedDate]="selectedCategory.rollOverStartDate"></app-month-selector>
           </div>
         </div>
         <div class="col-md-4">
           <p>
             <b>Total Spent:</b> {{(currentCategoryTotal | async) | safeCurrency }}<br>
             <b>Amount Left:</b> {{(selectedCategory.budgetAmount + (currentCategoryTotal | async) | safeCurrency)}}<br>
-            <!--<div *ngIf="selectedCategoryHasRolloverDate()">-->
           </p>
           <p *ngIf="selectedCategoryHasRolloverDate()">
             <b>Rollover Amount:</b> {{categoryService.getRolloverTotal(selectedCategory) | safeCurrency }}

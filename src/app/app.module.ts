@@ -14,6 +14,7 @@ import { LayoutService } from "./services/layout.service";
 import { BudgetPercentageViewerComponent } from './components/budget-percentage-viewer/budget-percentage-viewer.component';
 import { BudgetProgressBarComponent } from './components/budget-progress-bar/budget-progress-bar.component';
 import { SafeCurrencyPipe } from './pipes/safe-currency.pipe';
+import { MonthSelectorComponent } from './components/month-selector/month-selector.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { SafeCurrencyPipe } from './pipes/safe-currency.pipe';
     BudgetPercentageViewerComponent,
     BudgetProgressBarComponent,
     SafeCurrencyPipe,
+    MonthSelectorComponent,
   ],
   imports: [
     BrowserModule, 
