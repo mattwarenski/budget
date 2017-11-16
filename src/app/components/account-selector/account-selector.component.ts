@@ -14,6 +14,7 @@ export class AccountSelectorComponent implements OnInit, OnDestroy {
   selectedAccount: Account;
   editing: boolean;
   accountSubscription: Subscription
+  selectedDate: Date;
 
   constructor(private accountService: AccountService) { }
 
@@ -51,6 +52,10 @@ export class AccountSelectorComponent implements OnInit, OnDestroy {
   getExpenseHeader(){
     let formattedBallance = new SafeCurrencyPipe().transform(this.selectedAccount.balance);
     return `${this.selectedAccount.name}: ${formattedBallance}` 
+  }
+
+  onSelectedMonthChange(date: Date){
+    this.selectedDate = date; 
   }
 
   onAdd(){

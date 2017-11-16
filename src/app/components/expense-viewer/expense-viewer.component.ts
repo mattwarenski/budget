@@ -10,6 +10,8 @@ import { ExpenseService } from "../../services/expense.service";
 import { Subscription } from "rxjs/Subscription";
 import { DataTable } from 'primeng/components/datatable/datatable';
 import { Account } from '../../model/account';
+import { DBFilter } from 'sqlite-base/DBFilter';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-expense-viewer',
@@ -24,14 +26,42 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
   selectedRow;
   categories;
   editing: boolean;
+  _displayMonth: Date;
   Date = Date;
+
   @Input() account: Account;
+
+  @Input() set displayMonth(_displayMonth: Date){
+    this._displayMonth = _displayMonth;
+    this.getExpenses();
+  };
+
   @Output() onTransaction = new EventEmitter();
 
   constructor(
     private categoryService: CategoryService,
     private expenseService: ExpenseService,
   ) { }
+
+  getExpenses(){
+    let expenseModel = new Expense();
+    expenseModel.accountId = this.account.id;
+    let dbFilter = new DBFilter();
+    dbFilter.earliestDate = moment(this._displayMonth).startOf('month').toDate();
+    dbFilter.latestDate = moment(this._displayMonth).endOf('month').toDate();
+    dbFilter.dateField = "date";
+
+    if(this.expenseSubscription){
+      this.expenseSubscription.unsubscribe();
+    }
+
+    this.expenseSubscription = this.expenseService.getAll(expenseModel, dbFilter).subscribe((expenses: Expense[])=>{
+      //sort by date then id so that newest on is always on top
+      let sorted = expenses.sort((a: Expense, b: Expense) => (+b.date) - (+a.date) || b.id - a.id);
+      this.expenses = [];
+      this.expenses = this.expenses.concat(sorted);
+    });
+  }
 
   onEditComplete(event){
     if(event.column && event.column.field === 'amount'){
@@ -45,15 +75,7 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    let expenseModel = new Expense();
-    expenseModel.accountId = this.account.id;
-    this.expenseSubscription = this.expenseService.getAll(expenseModel).subscribe((expenses: Expense[])=>{
-      //sort by date then id so that newest on is always on top
-      let sorted = expenses.sort((a: Expense, b: Expense) => (+b.date) - (+a.date) || b.id - a.id);
-      this.expenses = [];
-      this.expenses = this.expenses.concat(sorted);
-    });
-
+    this.getExpenses();
     this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[]) => {
       this.categories = [{'label' : 'Uncategorized', 'value' : 0}].concat(this.categoryService.arrangeCategories());
     });

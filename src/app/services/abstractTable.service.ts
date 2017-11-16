@@ -4,6 +4,7 @@ import { DataBase } from "sqlite-base/DataBase";
 import { RowEntity } from "sqlite-base/RowEntity";
 import { Observable } from "rxjs/Observable";
 import { Observer } from "rxjs/Observer";
+import { DBFilter } from 'sqlite-base/DBFilter';
 
 export class AbstractTableService<T extends RowEntity> {
   entities: T[] = [];
@@ -12,6 +13,7 @@ export class AbstractTableService<T extends RowEntity> {
   private sqlService: SqlService;
   private currentEntities: BehaviorSubject<T[]>;
   private entityConstructor;
+  private dbFilter: DBFilter;
 
   constructor(entityConstructor, sqlService: SqlService) {
     this.sqlService = sqlService;
@@ -19,13 +21,18 @@ export class AbstractTableService<T extends RowEntity> {
     this.entityConstructor = entityConstructor;
   }
 
-  getAll(filter?: T): BehaviorSubject<T[]>{
+  getAll(filter?: T, dbFilter?: DBFilter): BehaviorSubject<T[]>{ //only refresh if a filter was passed to begin with
+    let filterChanged = this.dbFilter && ( dbFilter.earliestDate != this.dbFilter.earliestDate || this.dbFilter.latestDate != this.dbFilter.latestDate);
+    if(filterChanged){
+      this.entities = []; 
+    }
+    this.dbFilter = dbFilter;
     this.filter = filter;
     this.sqlService.getDB(
       db => {
         //concat so if the array is modified before this returns no changes are lost
-        if(!this.fetchedFromDb){
-          this.entities = this.getRows(db).concat(this.entities);
+        if(!this.fetchedFromDb || filterChanged ){
+          this.entities = this.getRows(db, dbFilter).concat(this.entities);
           this.fetchedFromDb = true;
         }
         this.currentEntities.next(this.entities);
@@ -33,8 +40,8 @@ export class AbstractTableService<T extends RowEntity> {
     return this.currentEntities;  
   }
 
-  private getRows(db: DataBase){
-    return db.getRows(this.filter ? this.filter : new this.entityConstructor()); 
+  private getRows(db: DataBase, dbFilter?: DBFilter){
+    return db.getRows(this.filter ? this.filter : new this.entityConstructor(), dbFilter); 
   }
 
   upsertRow(entity: T): void{

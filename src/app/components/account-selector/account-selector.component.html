@@ -1,13 +1,24 @@
 <div class="panel panel-primary comp-frame">
   <div class="panel-heading clearfix">
-      <h5 class="pull-left">{{selectedAccount ? getExpenseHeader() : getAccountHeader()}}</h5>
-      <div class="btn-group pull-right">
-        <button *ngIf="!editing && !selectedAccount" (click)="editing = true" class="btn btn-sm btn-default pull-right">Edit</button>
-        <button *ngIf="editing && !selectedAccount" (click)="editing = false" class="btn btn-sm btn-default pull-right">Done</button>
-        <button *ngIf="selectedAccount" (click)="selectedAccount = null" class="btn btn-sm btn-default pull-right">Back</button>
-    </div>
+    <table [ngStyle]="{width : '100%'}">
+      <tr>
+        <!--todo layout in table-->
+        <td class="text-left" [ngStyle]="{width : '25%'}">
+          <h5>{{selectedAccount ? getExpenseHeader() : getAccountHeader()}}</h5>
+        </td>
+        <td class="text-center" [ngStyle]="{width : '50%'}">
+          <app-month-selector *ngIf="selectedAccount" (onSelect)="onSelectedMonthChange($event)"></app-month-selector>
+        </td>
+        <td class="text-right" [ngStyle]="{width : '25%'}">
+          <div class="btn-group">
+            <button *ngIf="!editing && !selectedAccount" (click)="editing = true" class="btn btn-sm btn-default pull-right">Edit</button>
+            <button *ngIf="editing && !selectedAccount" (click)="editing = false" class="btn btn-sm btn-default pull-right">Done</button>
+            <button *ngIf="selectedAccount" (click)="selectedAccount = null" class="btn btn-sm btn-default pull-right">Back</button>
+          </div>
+        </td>
+    </table>
   </div>
-  <app-expense-viewer *ngIf="selectedAccount" [account]="selectedAccount" (onTransaction)="onAccountAmmount($event)"></app-expense-viewer>
+  <app-expense-viewer *ngIf="selectedAccount" [account]="selectedAccount" [displayMonth]="selectedDate" (onTransaction)="onAccountAmmount($event)"></app-expense-viewer>
   <div *ngIf="!selectedAccount">
     <div class="panel-body">
       <p-dataTable *ngIf='accounts' [scrollable]="true" scrollHeight="200px" rowHover="true" [value]="accounts" (onRowClick)="onRowClick($event.data)" (onEditComplete)="onEditComplete($event.data)" [editable]='editing'>
