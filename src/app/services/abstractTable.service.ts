@@ -14,6 +14,7 @@ export class AbstractTableService<T extends RowEntity> {
   private currentEntities: BehaviorSubject<T[]>;
   private entityConstructor;
   private dbFilter: DBFilter;
+  protected db: DataBase;
 
   constructor(entityConstructor, sqlService: SqlService) {
     this.sqlService = sqlService;
@@ -30,6 +31,7 @@ export class AbstractTableService<T extends RowEntity> {
     this.filter = filter;
     this.sqlService.getDB(
       db => {
+        this.db = db;
         //concat so if the array is modified before this returns no changes are lost
         if(!this.fetchedFromDb || filterChanged ){
           this.entities = this.getRows(db, dbFilter).concat(this.entities);

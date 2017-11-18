@@ -27,7 +27,7 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
   ngOnInit() {
     this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[])=>{
       this.categories = categories;
-      this.categoryList = this.categoryService.arrangeCategories();
+      this.categoryList = this.categoryService.getArrangedLabels();
       if(this.categories.length){
         if(!this.selectedCategory){
           this.selectedCategory = this.categories[0]; 
@@ -52,7 +52,7 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
   getParentCategories(): any[]{
     let parentCategories =  this.categories.filter(
       (category: Category)=>!category.parentId && category.id !== this.selectedCategory.id);
-    let mappedCategories = this.categoryService.arrangeCategories();
+    let mappedCategories = this.categoryService.getArrangedLabels();
     return [{label : "None", value : 0}].concat(mappedCategories);
   }
 

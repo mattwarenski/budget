@@ -77,7 +77,7 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.getExpenses();
     this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[]) => {
-      this.categories = [{'label' : 'Uncategorized', 'value' : 0}].concat(this.categoryService.arrangeCategories());
+      this.categories = [{'label' : 'Uncategorized', 'value' : 0}].concat(this.categoryService.getArrangedLabels());
     });
   }
 

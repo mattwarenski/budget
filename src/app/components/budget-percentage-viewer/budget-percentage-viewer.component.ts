@@ -19,10 +19,15 @@ export class BudgetPercentageViewerComponent implements OnInit {
 
   ngOnInit() {
     this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[])=>{
+      categories = this.categoryService.getAllAranged();
       Promise.all(categories.map( category => this.categoryService.getTotal(category, 0)))
         .then( totals =>{
           this.categoryMetadata = totals.map( (total, index) => {
-            return { 'title' : categories[index].name, 'total' : categories[index].budgetAmount, 'amount' :  -total };
+            return  { 'title' : categories[index].name,
+              'total' : categories[index].budgetAmount,
+              'amount' :  -total ,
+              'isParent' : (!categories[index].parentId ? true : false)
+            };
           });
         });
     });

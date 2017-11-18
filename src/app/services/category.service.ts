@@ -5,24 +5,23 @@ import { SqlService } from "./sql.service";
 import { DataBase } from "sqlite-base/DataBase";
 import { AbstractTableService } from "./abstractTable.service";
 import { Expense } from "../model/expense";
-import { TermUtils } from '../model/budgetTerm';
+import { TermUtils, Term } from '../model/budgetTerm';
 import { DBFilter } from 'sqlite-base/DBFilter';
 import * as moment from 'moment';
 
 @Injectable()
 export class CategoryService extends AbstractTableService<Category> {
-  db: DataBase;
+
+  private parentMap: any;
 
 
   constructor(private __sqlService: SqlService) {
     super(Category, __sqlService);
   }
 
-  /**
-   * Returns category labels with parents sorted alphabetically and children sorted alphabetically after them
-   */
-  arrangeCategories(){
+  getAllAranged(){
     let childCategories = {};
+    this.parentMap = {};
     this.entities.forEach((category: Category)=>{
       if(category.parentId){
         childCategories[category.parentId] ? childCategories[category.parentId].push(category) : childCategories[category.parentId] = [category];
@@ -35,13 +34,30 @@ export class CategoryService extends AbstractTableService<Category> {
 
    let categories = [];
    parentCategories.forEach((c: Category)=>{
-     categories.push({ label : c.name, "value": c.id, parent : true})
+     categories.push(c)
+     this.parentMap[c.id] = [];
      if(childCategories[c.id]){
          let sorted = this.sortAlphabetically(childCategories[c.id])
-           .forEach( child => categories.push({ label : child.name, "value": child.id })) 
+         .forEach( child =>{
+           categories.push(child);
+           this.parentMap[c.id].push(child)
+         });
      }
    });
+
     return categories;
+  }
+
+  /**
+   * Returns category labels with parents sorted alphabetically and children sorted alphabetically after them
+   */
+  getArrangedLabels(){
+    return this.getAllAranged().map((cat : Category) => {
+      if(cat.parentId){
+        return { label : cat.name, "value": cat.id }
+      } 
+      return { label : cat.name, "value": cat.id, parent : true};
+    })
   }
 
   private sortAlphabetically(catArr: Category[]){
@@ -64,26 +80,48 @@ export class CategoryService extends AbstractTableService<Category> {
     return (numMonths * category.budgetAmount) + total;
   }
 
-  getTotal(category: Category, termDelta = 0): Promise<number> {
+  private getCategoryTotal(category: Category, termDelta = 0): Promise<number>{
     return new Promise((resolve)=>{
       if(!this.db){
         this.__sqlService.getDB(
           (db: DataBase)=> {
             this.db = db;
-            let total = this.calculateTotalByTerm(category, termDelta);
+            let total = this.calculateTotalByMonth(category, termDelta);
             resolve(total);
           });
       }
       else{
-        let total = this.calculateTotalByTerm(category, termDelta);
+        let total = this.calculateTotalByMonth(category, termDelta);
         resolve(total);
       }
     });
+  
   }
 
-  private calculateTotalByTerm(category: Category, termDelta: number): number{
-    let earliestDate = TermUtils.getTermStartDate(category.term);
-    let latestDate = TermUtils.getTermEndDate(category.term);
+  getTotal(startCategory: Category, termDelta = 0): Promise<number> {
+    //if there is no parent map, get it
+    if(!startCategory.parentId && this.parentMap){
+      this.getAllAranged(); 
+      return new Promise((resolve)=>{
+        Promise.all(
+          this.parentMap[startCategory.id]
+          .map( c => this.getCategoryTotal(c, termDelta))
+          .concat(this.getCategoryTotal(startCategory, termDelta))
+        ).then( (totals: any[]) => {
+          let total = totals.reduce((total: number, current: Expense)=> total + (+current), 0)
+          resolve(total);
+        });
+      })
+    }
+    else{
+      return this.getCategoryTotal(startCategory, termDelta);
+    }
+       
+  }
+
+  private calculateTotalByMonth(category: Category, termDelta: number): number{
+    let earliestDate = TermUtils.getTermStartDate(Term.Monthly);
+    let latestDate = TermUtils.getTermEndDate(Term.Monthly);
     return this.calculateTotalByDate(category, earliestDate, latestDate);
   }
 

@@ -4,7 +4,10 @@
   </div>
   <div class="panel-body" [ngStyle]='{ "max-height" : "500px", "overflow-y" : "auto"}'>
     <div *ngFor="let category of categoryMetadata">
-      <div *ngIf="category.total">
+      <div *ngIf="category.isParent">
+        <h3>{{category.title}} - {{category.amount | safeCurrency}}</h3>
+      </div>
+      <div *ngIf="category.total" [ngStyle]="{'margin-left' : '10px'}">
         <app-budget-progress-bar  [title]="category.title" [amount]="category.amount" [total]="category.total"></app-budget-progress-bar>
       </div>
     </div>
