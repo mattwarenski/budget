@@ -1,7 +1,11 @@
 <div class="form-inline">
   <div class="form-group">
     <label for="progress-bar" [ngStyle]="{'min-width' : '300px', 'font-size' : '13pt'}">{{title}}</label>
-    <p-progressBar id="progress-bar" [value]="percentage"></p-progressBar>
+    <div class="progress">
+      <div class="progress-bar" [ngClass]="getStyleClass()" [ngStyle]="{'width' : getRoundedPercentage()}">
+        <span class="text-center text-bold">{{percentage}}%</span>
+      </div>
+    </div>
   </div>
   <div class="form-group text-middle" [ngStyle]="{'margin-left' : '15px', 'margin-top' : '25px'}">
     <h5><b>{{amount | safeCurrency}}/{{total | safeCurrency}}</b></h5>
