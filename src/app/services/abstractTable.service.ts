@@ -34,7 +34,7 @@ export class AbstractTableService<T extends RowEntity> {
         this.db = db;
         //concat so if the array is modified before this returns no changes are lost
         if(!this.fetchedFromDb || filterChanged ){
-          this.entities = this.getRows(db, dbFilter).concat(this.entities);
+          this.entities = this.getRows(db, this.dbFilter).concat(this.entities);
           this.fetchedFromDb = true;
         }
         this.currentEntities.next(this.entities);
@@ -53,7 +53,7 @@ export class AbstractTableService<T extends RowEntity> {
           let currentIndex = this.entities.findIndex( c => entity.id && c.id === entity.id); 
           if(currentIndex < 0){
             //get from db so that assigned db id shows up
-            this.entities = this.getRows(db);
+            this.entities = this.getRows(db, this.dbFilter);
           }
           else{
             this.entities[currentIndex] = entity; 
