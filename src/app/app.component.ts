@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { SqlService } from "./services/sql.service";
-import { OnInit } from "@angular/core/src/metadata/lifecycle_hooks";
+import { OnInit } from "@angular/core";
 import { Expense } from "./model/expense";
 
 @Component({

@@ -15,6 +15,7 @@ import { BudgetPercentageViewerComponent } from './components/budget-percentage-
 import { BudgetProgressBarComponent } from './components/budget-progress-bar/budget-progress-bar.component';
 import { SafeCurrencyPipe } from './pipes/safe-currency.pipe';
 import { MonthSelectorComponent } from './components/month-selector/month-selector.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { MonthSelectorComponent } from './components/month-selector/month-select
     DropdownModule,
     FormsModule,
     BrowserAnimationsModule,
-    ProgressBarModule
+    ProgressBarModule,
+    AppRoutingModule
   ],
   providers: [
     SqlService,

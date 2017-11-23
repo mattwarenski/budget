@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { Subscription } from "rxjs/Subscription";
 import { OnDestroy } from "@angular/core";
 import { SafeCurrencyPipe } from '../../pipes/safe-currency.pipe';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-account-selector',
@@ -16,7 +17,10 @@ export class AccountSelectorComponent implements OnInit, OnDestroy {
   accountSubscription: Subscription
   selectedDate: Date;
 
-  constructor(private accountService: AccountService) { }
+  constructor(
+    private accountService: AccountService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.accountSubscription = this.accountService.getAll().subscribe((accounts: Account[])=>{
@@ -33,7 +37,10 @@ export class AccountSelectorComponent implements OnInit, OnDestroy {
   }
 
   onRowClick(account: Account){
-    this.selectedAccount = account; 
+    this.router.navigate(['/expenses'], { queryParams: {
+      accountId : account.id,
+      showMonthSelect : true
+    }})
     this.editing = false;
   }
 

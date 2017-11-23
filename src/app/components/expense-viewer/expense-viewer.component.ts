@@ -1,4 +1,4 @@
-import { Input, Output, Component, OnInit, OnDestroy, EventEmitter } from '@angular/core';
+import { Input, Output, Component, OnInit, OnDestroy } from '@angular/core';
 import { Expense } from "../../model/expense";
 import { DropdownModule, DataTableModule, SharedModule } from 'primeng/primeng';
 import { CurrencyPipe } from '@angular/common';
@@ -12,6 +12,8 @@ import { DataTable } from 'primeng/components/datatable/datatable';
 import { Account } from '../../model/account';
 import { DBFilter } from 'sqlite-base/DBFilter';
 import * as moment from 'moment';
+import { ActivatedRoute } from '@angular/router';
+import { Params } from '@angular/router/src/shared';
 
 @Component({
   selector: 'app-expense-viewer',
@@ -26,29 +28,22 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
   selectedRow;
   categories;
   editing: boolean;
-  _displayMonth: Date;
   Date = Date;
-
-  @Input() account: Account;
-
-  @Input() set displayMonth(_displayMonth: Date){
-    this._displayMonth = _displayMonth;
-    this.getExpenses();
-  };
-
-  @Output() onTransaction = new EventEmitter();
+  accountId: number;
+  displayMonth: Date;
 
   constructor(
     private categoryService: CategoryService,
     private expenseService: ExpenseService,
+    private route: ActivatedRoute
   ) { }
 
   getExpenses(){
     let expenseModel = new Expense();
-    expenseModel.accountId = this.account.id;
+    expenseModel.accountId = this.accountId;
     let dbFilter = new DBFilter();
-    dbFilter.earliestDate = moment(this._displayMonth).startOf('month').toDate();
-    dbFilter.latestDate = moment(this._displayMonth).endOf('month').toDate();
+    dbFilter.earliestDate = moment(this.displayMonth).startOf('month').toDate();
+    dbFilter.latestDate = moment(this.displayMonth).endOf('month').toDate();
     dbFilter.dateField = "date";
 
     if(this.expenseSubscription){
@@ -68,17 +63,21 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
       let total = this.expenses.reduce((total: number, expense: Expense)=>{
         return total + (+expense.amount);
       }, 0);
-      this.onTransaction.emit(total); 
+      //TODO: update the total 
     }
     let data = event instanceof Expense ? event : event.data;
     this.expenseService.upsertRow(data);
   }
 
   ngOnInit() {
-    this.getExpenses();
-    this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[]) => {
-      this.categories = [{'label' : 'Uncategorized', 'value' : 0}].concat(this.categoryService.getArrangedLabels());
-    });
+    this.route.queryParams.subscribe(
+      params => {
+        this.accountId = params['accountId']
+        this.getExpenses();
+        this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[]) => {
+          this.categories = [{'label' : 'Uncategorized', 'value' : 0}].concat(this.categoryService.getArrangedLabels());
+        });
+      })
   }
 
   ngOnDestroy(){
@@ -92,7 +91,7 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
 
   onAdd(){
     let newExpense = new Expense();
-    newExpense.accountId = this.account.id;
+    newExpense.accountId = this.accountId
     newExpense.amount = 0;
     newExpense.name = "none"
     newExpense.categoryId = 0;
