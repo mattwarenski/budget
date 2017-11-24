@@ -26,7 +26,8 @@ export class BudgetPercentageViewerComponent implements OnInit {
             return  { 'title' : categories[index].name,
               'total' : categories[index].budgetAmount,
               'amount' :  -total ,
-              'isParent' : (!categories[index].parentId ? true : false)
+              'isParent' : (!categories[index].parentId ? true : false), 
+              'id' : categories[index].id
             };
           });
         });

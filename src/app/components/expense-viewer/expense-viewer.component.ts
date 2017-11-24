@@ -36,6 +36,8 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
   accountId: number;
   displayMonth: Date;
   account: Account;
+  categoryId: number;
+  category: Category;
 
   constructor(
     private categoryService: CategoryService,
@@ -46,7 +48,12 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
 
   getExpenses(){
     let expenseModel = new Expense();
-    expenseModel.accountId = this.accountId;
+    if(this.accountId){
+      expenseModel.accountId = this.accountId;
+    }
+    if(this.categoryId){
+      expenseModel.categoryId = this.categoryId;
+    }
     let dbFilter = new DBFilter();
     dbFilter.earliestDate = moment(this.displayMonth).startOf('month').toDate();
     dbFilter.latestDate = moment(this.displayMonth).endOf('month').toDate();
@@ -55,6 +62,7 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
     if(this.expenseSubscription){
       this.expenseSubscription.unsubscribe();
     }
+
 
     this.expenseSubscription = this.expenseService.getAll(expenseModel, dbFilter).subscribe((expenses: Expense[])=>{
       //sort by date then id so that newest on is always on top
@@ -79,13 +87,27 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
     this.expenseService.upsertRow(data);
   }
 
+  getHeader(){
+    if(this.accountId && this.account){
+      return this.account.name;
+    } 
+    if(this.category){
+      return this.category.name; 
+    }
+    return "Expenses";
+  }
+
   ngOnInit() {
     this.route.queryParams.subscribe(
       params => {
         this.accountId = params['accountId']
+        this.categoryId = params['categoryId'];
         this.getExpenses();
         this.getAccount();
         this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[]) => {
+          if(this.categoryId){
+            this.category = categories.find(c =>  c.id === +this.categoryId);  
+          }
           this.categories = [{'label' : 'Uncategorized', 'value' : 0}].concat(this.categoryService.getArrangedLabels());
         });
       })
@@ -108,8 +130,12 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(){
     this.categorySubscription.unsubscribe();
-    this.accountSubscription.unsubscribe();
-    this.expenseSubscription.unsubscribe();
+    if(this.accountSubscription){
+      this.accountSubscription.unsubscribe();
+    }
+    if(this.expenseSubscription){
+      this.expenseSubscription.unsubscribe();
+    }
   }
 
   onRowClick(e:any) {

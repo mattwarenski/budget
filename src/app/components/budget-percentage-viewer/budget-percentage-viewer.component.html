@@ -6,7 +6,7 @@
         <h3>{{category.title}} - {{category.amount | safeCurrency}}</h3>
       </div>
       <div *ngIf="category.total" [ngStyle]="{'margin-left' : '10px'}">
-        <app-budget-progress-bar  [title]="category.title" [amount]="category.amount" [total]="category.total"></app-budget-progress-bar>
+        <app-budget-progress-bar  [title]="category.title" [amount]="category.amount" [total]="category.total" [categoryId]="category.id"></app-budget-progress-bar>
       </div>
     </div>
   </div>
