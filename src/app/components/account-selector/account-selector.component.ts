@@ -5,10 +5,14 @@ import { Subscription } from "rxjs/Subscription";
 import { OnDestroy } from "@angular/core";
 import { SafeCurrencyPipe } from '../../pipes/safe-currency.pipe';
 import { Router } from '@angular/router';
+import { Util } from '../../../util';
+import { ExpenseService } from '../../services/expense.service';
+import { Expense } from '../../model/expense';
 
 @Component({
   selector: 'app-account-selector',
   templateUrl: './account-selector.component.html',
+  providers: [ExpenseService]
 })
 export class AccountSelectorComponent implements OnInit, OnDestroy {
   accounts: Account[];
@@ -16,15 +20,24 @@ export class AccountSelectorComponent implements OnInit, OnDestroy {
   editing: boolean;
   accountSubscription: Subscription
   selectedDate: Date;
+  accountTotals = {};
 
   constructor(
     private accountService: AccountService,
+    private expenseService: ExpenseService,
     private router: Router
   ) { }
 
   ngOnInit() {
     this.accountSubscription = this.accountService.getAll().subscribe((accounts: Account[])=>{
       this.accounts = accounts;
+      this.accounts.forEach( (account: Account) => {
+        let filter = new Expense();
+        filter.accountId = account.id;
+        this.expenseService.getAll(filter).take(1).subscribe((expenses => {
+          this.accountTotals[account.id] = Util.sumExpenses(expenses); 
+        }))
+      });
     });
   }
 

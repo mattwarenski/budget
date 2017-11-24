@@ -8,6 +8,7 @@ import { Expense } from "../model/expense";
 import { TermUtils, Term } from '../model/budgetTerm';
 import { DBFilter } from 'sqlite-base/DBFilter';
 import * as moment from 'moment';
+import { Util } from '../../util';
 
 @Injectable()
 export class CategoryService extends AbstractTableService<Category> {
@@ -108,7 +109,7 @@ export class CategoryService extends AbstractTableService<Category> {
           .map( c => this.getCategoryTotal(c, termDelta))
           .concat(this.getCategoryTotal(startCategory, termDelta))
         ).then( (totals: any[]) => {
-          let total = totals.reduce((total: number, current: Expense)=> total + (+current), 0)
+          let total = Util.sumExpenses(totals);
           resolve(total);
         });
       })
@@ -134,7 +135,6 @@ export class CategoryService extends AbstractTableService<Category> {
     let expense = new Expense();
     expense.categoryId = category.id;
 
-    return this.db.getRows(expense, dbFilter)
-      .reduce((total: number, current: Expense)=> total + (+current.amount), 0);
+    return Util.sumExpenses(this.db.getRows(expense, dbFilter));
   }
 }

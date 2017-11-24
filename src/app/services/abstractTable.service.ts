@@ -23,8 +23,9 @@ export class AbstractTableService<T extends RowEntity> {
   }
 
   getAll(filter?: T, dbFilter?: DBFilter): BehaviorSubject<T[]>{ //only refresh if a filter was passed to begin with
-    let filterChanged = this.dbFilter && ( dbFilter.earliestDate != this.dbFilter.earliestDate || this.dbFilter.latestDate != this.dbFilter.latestDate);
-    if(filterChanged){
+    let dbFilterChanged = this.dbFilter && ( dbFilter.earliestDate != this.dbFilter.earliestDate || this.dbFilter.latestDate != this.dbFilter.latestDate);
+    let filterChanged = this.filter ? true : false;
+    if(dbFilterChanged || filterChanged){
       this.entities = []; 
     }
     this.dbFilter = dbFilter;
@@ -33,7 +34,7 @@ export class AbstractTableService<T extends RowEntity> {
       db => {
         this.db = db;
         //concat so if the array is modified before this returns no changes are lost
-        if(!this.fetchedFromDb || filterChanged ){
+        if(!this.fetchedFromDb || dbFilterChanged || filterChanged){
           this.entities = this.getRows(db, this.dbFilter).concat(this.entities);
           this.fetchedFromDb = true;
         }

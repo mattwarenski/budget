@@ -14,6 +14,9 @@ import { DBFilter } from 'sqlite-base/DBFilter';
 import * as moment from 'moment';
 import { ActivatedRoute } from '@angular/router';
 import { Params } from '@angular/router/src/shared';
+import { Util } from '../../../util';
+import { AccountService } from '../../services/account.service';
+import { take } from 'rxjs/operator/take';
 
 @Component({
   selector: 'app-expense-viewer',
@@ -24,6 +27,7 @@ import { Params } from '@angular/router/src/shared';
 export class ExpenseViewerComponent implements OnInit, OnDestroy {
   expenseSubscription: Subscription;
   categorySubscription: Subscription;
+  accountSubscription: Subscription;
   expenses: Expense[] = [];
   selectedRow;
   categories;
@@ -31,11 +35,13 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
   Date = Date;
   accountId: number;
   displayMonth: Date;
+  account: Account;
 
   constructor(
     private categoryService: CategoryService,
     private expenseService: ExpenseService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private accountService: AccountService
   ) { }
 
   getExpenses(){
@@ -58,6 +64,10 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
     });
   }
 
+  getTotal(){
+    return Util.sumExpenses(this.expenses);
+  }
+
   onEditComplete(event){
     if(event.column && event.column.field === 'amount'){
       let total = this.expenses.reduce((total: number, expense: Expense)=>{
@@ -74,14 +84,31 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
       params => {
         this.accountId = params['accountId']
         this.getExpenses();
+        this.getAccount();
         this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[]) => {
           this.categories = [{'label' : 'Uncategorized', 'value' : 0}].concat(this.categoryService.getArrangedLabels());
         });
       })
   }
 
+  getAccount(){
+    if(this.accountId){
+      let filter = new Account();
+      filter.id = this.accountId;
+      if(this.accountSubscription){
+        this.accountSubscription.unsubscribe(); 
+      }
+      this.accountSubscription = this.accountService.getAll(filter).subscribe((accounts: Account[]) => {
+        if(accounts.length){
+          this.account = accounts[0];
+        }  
+      });
+    }
+  }
+
   ngOnDestroy(){
     this.categorySubscription.unsubscribe();
+    this.accountSubscription.unsubscribe();
     this.expenseSubscription.unsubscribe();
   }
 
@@ -110,7 +137,6 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
 
   onSelectedMonthChange(date: Date){
     this.displayMonth =  date; 
-    console.log("changed month to", this.displayMonth)
     this.getExpenses();
   }
 }
