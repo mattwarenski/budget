@@ -44,27 +44,6 @@ export class AccountSelectorComponent implements OnInit, OnDestroy {
     this.editing = false;
   }
 
-  //When a new amount is received from the expense emitter
-  onAccountAmmount(amount){
-    this.selectedAccount.balance = amount;
-    this.accountService.upsertRow(this.selectedAccount);
-  }
-
-  getAccountHeader(){
-    let total = this.accounts.reduce((total: number, current: Account) => total + (+current.balance), 0);
-    total = new SafeCurrencyPipe().transform(total);
-    return `Accounts: ${total}` 
-  }
-
-  getExpenseHeader(){
-    let formattedBallance = new SafeCurrencyPipe().transform(this.selectedAccount.balance);
-    return `${this.selectedAccount.name}: ${formattedBallance}` 
-  }
-
-  onSelectedMonthChange(date: Date){
-    this.selectedDate = date; 
-  }
-
   onAdd(){
     let newAccount = new Account();
     newAccount.name = "New Account"

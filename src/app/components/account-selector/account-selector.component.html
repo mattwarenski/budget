@@ -1,45 +1,37 @@
-<div [ngStyle]='{ "margin-left" : "15px"}'>
-  <h1>Categories:</h1>
-  <div [ngStyle]='{ "margin-left" : "15px"}'>
-    <table [ngStyle]="{width : '100%'}">
-      <tr>
-        <!--todo layout in table-->
-        <td class="text-left" [ngStyle]="{width : '25%'}">
-          <h5>{{selectedAccount ? getExpenseHeader() : getAccountHeader()}}</h5>
-        </td>
-        <td class="text-center" [ngStyle]="{width : '50%'}">
-          <app-month-selector *ngIf="selectedAccount" (onSelect)="onSelectedMonthChange($event)"></app-month-selector>
-        </td>
-        <td class="text-right" [ngStyle]="{width : '25%'}">
-          <div class="btn-group">
-            <button *ngIf="!editing && !selectedAccount" (click)="editing = true" class="btn btn-sm btn-default pull-right">Edit</button>
-            <button *ngIf="editing && !selectedAccount" (click)="editing = false" class="btn btn-sm btn-default pull-right">Done</button>
-            <button *ngIf="selectedAccount" (click)="selectedAccount = null" class="btn btn-sm btn-default pull-right">Back</button>
-          </div>
-        </td>
-    </table>
-  </div>
-  <div class="panel-body">
-    <p-dataTable *ngIf='accounts' [scrollable]="true" rowHover="true" [value]="accounts" (onRowClick)="onRowClick($event.data)" (onEditComplete)="onEditComplete($event.data)" [editable]='editing'>
-      <p-column field="name" header="Name" [editable]="true"></p-column>
-      <p-column field="bank" header="Bank" [editable]="true"></p-column>
-      <p-column field="balance" header="Amount" styleClass="text-right">
-        <ng-template let-col let-ex="rowData" pTemplate="body">
-          <span [style.color]="ex['balance'] < 0 ? 'red' : 'green'">{{ex['balance'] |  safeCurrency }}</span>
-        </ng-template>
-      </p-column>
-      <p-column *ngIf="editing" [style]="{'width': '30px'}">
-        <ng-template let-ex="rowData" pTemplate="header">
-          <a (click)="onAdd()">
-            <span class="glyphicon glyphicon-plus text-success"></span>
-          </a>
-        </ng-template>
-        <ng-template let-ex="rowData" pTemplate="body">
-          <a (click)="onDelete(ex)">
-            <span class="glyphicon glyphicon-trash text-danger"></span>
-          </a>
-        </ng-template>
-      </p-column>
-    </p-dataTable>
-  </div>
+<table [ngStyle]="{width : '100%'}">
+  <tr>
+    <td class="text-left" [ngStyle]="{width : '25%'}">
+      <h1>Accounts</h1>
+    </td>
+    <td class="text-center" [ngStyle]="{width : '50%'}">
+    </td>
+    <td class="text-right" [ngStyle]="{width : '25%'}">
+      <div class="btn-group">
+        <button *ngIf="!editing" (click)="editing = true" class="btn btn-sm btn-default pull-right">Edit</button>
+        <button *ngIf="editing" (click)="editing = false" class="btn btn-sm btn-default pull-right">Done</button>
+      </div>
+    </td>
+</table>
+<div>
+  <p-dataTable *ngIf='accounts' [scrollable]="true" rowHover="true" [value]="accounts" (onRowClick)="onRowClick($event.data)" (onEditComplete)="onEditComplete($event.data)" [editable]='editing'>
+    <p-column field="name" header="Name" [editable]="true"></p-column>
+    <p-column field="bank" header="Bank" [editable]="true"></p-column>
+    <p-column field="balance" header="Amount" styleClass="text-right">
+      <ng-template let-col let-ex="rowData" pTemplate="body">
+        <span [style.color]="ex['balance'] < 0 ? 'red' : 'green'">{{ex['balance'] |  safeCurrency }}</span>
+      </ng-template>
+    </p-column>
+    <p-column *ngIf="editing" [style]="{'width': '30px'}">
+      <ng-template let-ex="rowData" pTemplate="header">
+        <a (click)="onAdd()">
+          <span class="glyphicon glyphicon-plus text-success"></span>
+        </a>
+      </ng-template>
+      <ng-template let-ex="rowData" pTemplate="body">
+        <a (click)="onDelete(ex)">
+          <span class="glyphicon glyphicon-trash text-danger"></span>
+        </a>
+      </ng-template>
+    </p-column>
+  </p-dataTable>
 </div>

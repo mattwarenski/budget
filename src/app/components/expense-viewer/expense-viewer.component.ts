@@ -107,4 +107,10 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
   findCategory(id: string){
     return this.categories.find( c => c.value === parseInt(id));
   }
+
+  onSelectedMonthChange(date: Date){
+    this.displayMonth =  date; 
+    console.log("changed month to", this.displayMonth)
+    this.getExpenses();
+  }
 }

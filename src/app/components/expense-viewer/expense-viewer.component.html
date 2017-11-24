@@ -1,49 +1,61 @@
-<div class="form-group" (keydown.control.n)="onAdd()">
-  <p-dataTable
-     *ngIf='categories'
-     [scrollable]="true"
-     [style]="{'min-height' : '250px'}"
-     scrollHeight="2000px"
-     [value]="expenses"
-     (rowClick)="onRowClick($event)"
-     (onEditComplete)="editing=false; onEditComplete($event)"
-     (onEditInit)="editing=true"
-     (onEditCancel)="editing=false"
-     [editable]='true'>
-    <p-column field="date"  [style]=" {'overflow':'visible' }" header="Date" [editable]="true">
-      <ng-template let-col let-ex="rowData" pTemplate="body">
-        {{ex[col.field] | date}}
-      </ng-template>
-      <ng-template let-col let-ex="rowData" pTemplate="editor">
-        <p-calendar (onSelect)="onEditComplete(ex)"	[(ngModel)]="ex[col.field]"></p-calendar>
-      </ng-template>
-    </p-column>
-    <p-column field="name" header="Name" [editable]="true"></p-column>
-    <p-column field="description" header="Description" [editable]="true"></p-column>
-    <p-column field="categoryId" header="Category" [editable]="true" [style]="{'overflow':'visible'}">
-      <ng-template let-col let-ex="rowData" pTemplate='body'>
-        <span>{{findCategory(ex['categoryId']).label}}</span>
-      </ng-template>
-      <ng-template let-col let-ex="rowData" pTemplate='editor'>
-        <p-dropdown [filter]='true' [(ngModel)]='ex[col.field]' (onChange)="onEditComplete(ex)" [options]='categories' [style]="{'width': '100%'}"></p-dropdown>
-      </ng-template>
-    </p-column>
-    <p-column field="amount" header="Amount" styleClass="text-right" [editable]="true">
-      <ng-template let-col let-ex="rowData" pTemplate="body">
-        <span [style.color]="ex['amount'] < 0 ? 'red' : 'green'">{{ ex['amount'] | safeCurrency}}</span>
-      </ng-template>
-    </p-column>
-    <p-column [style]="{'width': '30px'}">
-      <ng-template let-ex="rowData" pTemplate="header">
-        <a (click)="onAdd()">
-          <span class="glyphicon glyphicon-plus text-success"></span>
-        </a>
-      </ng-template>
-      <ng-template let-ex="rowData" pTemplate="body">
-        <a (click)="onDelete(ex)">
-          <span class="glyphicon glyphicon-trash text-danger"></span>
-        </a>
-      </ng-template>
-    </p-column>
-  </p-dataTable>
-</div>
+  <table [ngStyle]="{width : '100%'}">
+    <tr>
+      <td class="text-left" [ngStyle]="{width : '25%'}">
+        <h1>Expenses</h1>
+      </td>
+      <td class="text-center" [ngStyle]="{width : '50%'}">
+        <app-month-selector (onSelect)="onSelectedMonthChange($event)"></app-month-selector>
+      </td>
+      <td class="text-right" [ngStyle]="{width : '25%'}">
+        <a routerLink="/accounts" class="btn btn-sm btn-default pull-right">Back</a>
+      </td>
+  </table>
+  <div class="form-group" (keydown.control.n)="onAdd()">
+    <p-dataTable
+       *ngIf='categories'
+       [scrollable]="true"
+       [style]="{'min-height' : '250px'}"
+       scrollHeight="2000px"
+       [value]="expenses"
+       (rowClick)="onRowClick($event)"
+       (onEditComplete)="editing=false; onEditComplete($event)"
+       (onEditInit)="editing=true"
+       (onEditCancel)="editing=false"
+       [editable]='true'>
+      <p-column field="date"  [style]=" {'overflow':'visible' }" header="Date" [editable]="true">
+        <ng-template let-col let-ex="rowData" pTemplate="body">
+          {{ex[col.field] | date}}
+        </ng-template>
+        <ng-template let-col let-ex="rowData" pTemplate="editor">
+          <p-calendar (onSelect)="onEditComplete(ex)"	[(ngModel)]="ex[col.field]"></p-calendar>
+        </ng-template>
+      </p-column>
+      <p-column field="name" header="Name" [editable]="true"></p-column>
+      <p-column field="description" header="Description" [editable]="true"></p-column>
+      <p-column field="categoryId" header="Category" [editable]="true" [style]="{'overflow':'visible'}">
+        <ng-template let-col let-ex="rowData" pTemplate='body'>
+          <span>{{findCategory(ex['categoryId']).label}}</span>
+        </ng-template>
+        <ng-template let-col let-ex="rowData" pTemplate='editor'>
+          <p-dropdown [filter]='true' [(ngModel)]='ex[col.field]' (onChange)="onEditComplete(ex)" [options]='categories' [style]="{'width': '100%'}"></p-dropdown>
+        </ng-template>
+      </p-column>
+      <p-column field="amount" header="Amount" styleClass="text-right" [editable]="true">
+        <ng-template let-col let-ex="rowData" pTemplate="body">
+          <span [style.color]="ex['amount'] < 0 ? 'red' : 'green'">{{ ex['amount'] | safeCurrency}}</span>
+        </ng-template>
+      </p-column>
+      <p-column [style]="{'width': '30px'}">
+        <ng-template let-ex="rowData" pTemplate="header">
+          <a (click)="onAdd()">
+            <span class="glyphicon glyphicon-plus text-success"></span>
+          </a>
+        </ng-template>
+        <ng-template let-ex="rowData" pTemplate="body">
+          <a (click)="onDelete(ex)">
+            <span class="glyphicon glyphicon-trash text-danger"></span>
+          </a>
+        </ng-template>
+      </p-column>
+    </p-dataTable>
+  </div>
