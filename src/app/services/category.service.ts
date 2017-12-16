@@ -87,12 +87,12 @@ export class CategoryService extends AbstractTableService<Category> {
         this.__sqlService.getDB(
           (db: DataBase)=> {
             this.db = db;
-            let total = this.calculateTotalByMonth(category, termDelta);
+            let total = this.calculateTotalByTerm(category, termDelta);
             resolve(total);
           });
       }
       else{
-        let total = this.calculateTotalByMonth(category, termDelta);
+        let total = this.calculateTotalByTerm(category, termDelta);
         resolve(total);
       }
     });
@@ -120,9 +120,18 @@ export class CategoryService extends AbstractTableService<Category> {
        
   }
 
-  private calculateTotalByMonth(category: Category, termDelta: number): number{
-    let earliestDate = TermUtils.getTermStartDate(Term.Monthly);
-    let latestDate = TermUtils.getTermEndDate(Term.Monthly);
+  private calculateTotalByTerm(category: Category, termDelta: number): number{
+    let earliestDate;
+    let latestDate;
+    if(category.term === Term.Monthly){
+      earliestDate = TermUtils.getTermStartDate(Term.Monthly);
+      latestDate = TermUtils.getTermEndDate(Term.Monthly);
+    }
+    else{
+      earliestDate = category.rollOverStartDate;
+      latestDate = new Date();
+      console.log("calculating", category.name, "with terms", earliestDate, "to", latestDate);
+    }
     return this.calculateTotalByDate(category, earliestDate, latestDate);
   }
 

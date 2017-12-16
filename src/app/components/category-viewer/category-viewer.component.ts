@@ -1,3 +1,4 @@
+import { Term } from '../../model/budgetTerm';
 import { Category } from "../../model/category";
 import { CategoryService } from "../../services/category.service";
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -23,6 +24,7 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
   currentCategoryTotal: Observable<number>;
   editingNew: boolean;
   moment = moment;
+
 
   ngOnInit() {
     this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[])=>{
@@ -121,6 +123,10 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
 
   private updateCategoryTotal(){
     this.currentCategoryTotal = Observable.fromPromise(this.categoryService.getTotal(this.selectedCategory,0));
+  }
+
+  isOneTime(): boolean {
+    return +this.selectedCategory.term === Term.OneTime; 
   }
 
 }
