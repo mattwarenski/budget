@@ -1,6 +1,6 @@
 <div class="form-inline">
   <div class="form-group">
-    <label for="progress-bar" [ngStyle]="{'min-width' : '300px', 'font-size' : '13pt'}">{{title}}</label>
+    <label for="progress-bar" [ngStyle]="{'min-width' : '300px', 'font-size' : '13pt'}">{{title}}{{isOneTime ? " (One Time)" : ""}}</label>
     <div class="progress">
       <div class="progress-bar" [ngClass]="getStyleClass()" [ngStyle]="{'width' : getRoundedPercentage()}">
         <span class="text-center text-bold">{{percentage}}%</span>

@@ -3,6 +3,7 @@ import { CategoryService } from '../../services/category.service';
 import { Category } from '../../model/category';
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
+import { Term } from '../../model/budgetTerm';
 
 @Component({
   selector: 'app-budget-percentage-viewer',
@@ -39,6 +40,7 @@ export class BudgetPercentageViewerComponent implements OnInit {
             return  { 'title' : categories[index].name,
               'total' : categories[index].budgetAmount,
               'amount' :  -total ,
+              'isOneTime' : categories[index].term == Term.OneTime,
               'isParent' : (!categories[index].parentId ? true : false), 
               'id' : categories[index].id
             };
