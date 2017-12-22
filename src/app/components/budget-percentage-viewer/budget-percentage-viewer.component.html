@@ -1,12 +1,22 @@
+<table [ngStyle]="{width : '100%'}">
+  <tr>
+    <td class="text-left" [ngStyle]="{width : '25%'}">
+      <h1>Budget Progress</h1>
+    </td>
+    <td class="text-center" [ngStyle]="{width : '50%'}">
+      <app-month-selector (onSelect)="onSelectedMonthChange($event)"></app-month-selector>
+    </td>
+    <td class="text-right" [ngStyle]="{width : '25%'}">
+    </td>
+</table>
 <div [ngStyle]='{ "margin-left" : "15px"}'>
-  <h1>Budget Progress</h1>
   <div [ngStyle]='{ "margin-left" : "15px"}'>
     <div *ngFor="let category of categoryMetadata">
       <div *ngIf="category.isParent">
         <h3>{{category.title}} - {{category.amount | safeCurrency}}</h3>
       </div>
       <div *ngIf="category.total" [ngStyle]="{'margin-left' : '10px'}">
-        <app-budget-progress-bar  [title]="category.title" [amount]="category.amount" [total]="category.total" [categoryId]="category.id"></app-budget-progress-bar>
+        <app-budget-progress-bar  [title]="category.title" [month]="selectedDate.toString()" [amount]="category.amount" [total]="category.total" [categoryId]="category.id"></app-budget-progress-bar>
       </div>
     </div>
   </div>

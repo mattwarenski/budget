@@ -17,6 +17,7 @@ import { Params } from '@angular/router/src/shared';
 import { Util } from '../../../util';
 import { AccountService } from '../../services/account.service';
 import { take } from 'rxjs/operator/take';
+import { TermUtils } from '../../model/budgetTerm';
 
 @Component({
   selector: 'app-expense-viewer',
@@ -55,8 +56,8 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
       expenseModel.categoryId = this.categoryId;
     }
     let dbFilter = new DBFilter();
-    dbFilter.earliestDate = moment(this.displayMonth).startOf('month').toDate();
-    dbFilter.latestDate = moment(this.displayMonth).endOf('month').toDate();
+    dbFilter.earliestDate = TermUtils.getMonthStart(this.displayMonth);
+    dbFilter.latestDate = TermUtils.getMonthEnd(this.displayMonth);
     dbFilter.dateField = "date";
 
     if(this.expenseSubscription){
@@ -102,6 +103,11 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
       params => {
         this.accountId = params['accountId']
         this.categoryId = params['categoryId'];
+        let month = params['month'];
+        console.log(params);
+        if(month){
+          this.displayMonth = new Date(month);
+        }
         this.getExpenses();
         this.getAccount();
         this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[]) => {

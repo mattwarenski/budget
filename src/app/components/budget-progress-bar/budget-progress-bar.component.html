@@ -8,6 +8,6 @@
     </div>
   </div>
   <div class="form-group text-middle" [ngStyle]="{'margin-left' : '15px', 'margin-top' : '25px'}">
-    <h5><a routerLink="/expenses" [queryParams]="{'categoryId' : categoryId}">{{amount | safeCurrency}}/{{total | safeCurrency}}</a></h5>
+    <h5><a routerLink="/expenses" [queryParams]="{'categoryId' : categoryId, 'month' : month}">{{amount | safeCurrency}}/{{total | safeCurrency}}</a></h5>
   </div>
 </div>

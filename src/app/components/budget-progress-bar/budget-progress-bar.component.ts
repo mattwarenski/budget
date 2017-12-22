@@ -11,6 +11,7 @@ export class BudgetProgressBarComponent implements OnInit {
   @Input() amount: number;
   @Input() title: string;
   @Input() categoryId: number;
+  @Input() month: string;
   percentage: number;
 
   constructor() { }

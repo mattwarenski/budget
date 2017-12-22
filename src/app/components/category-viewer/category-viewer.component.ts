@@ -122,7 +122,7 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
   }
 
   private updateCategoryTotal(){
-    this.currentCategoryTotal = Observable.fromPromise(this.categoryService.getTotal(this.selectedCategory,0));
+    this.currentCategoryTotal = Observable.fromPromise(this.categoryService.getTotal(this.selectedCategory,new Date()));
   }
 
   isOneTime(): boolean {

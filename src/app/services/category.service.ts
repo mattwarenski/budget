@@ -81,33 +81,33 @@ export class CategoryService extends AbstractTableService<Category> {
     return (numMonths * category.budgetAmount) + total;
   }
 
-  private getCategoryTotal(category: Category, termDelta = 0): Promise<number>{
+  private getCategoryTotal(category: Category, startDate: Date): Promise<number>{
     return new Promise((resolve)=>{
       if(!this.db){
         this.__sqlService.getDB(
           (db: DataBase)=> {
             this.db = db;
-            let total = this.calculateTotalByTerm(category, termDelta);
+            let total = this.calculateTotalByTerm(category, startDate);
             resolve(total);
           });
       }
       else{
-        let total = this.calculateTotalByTerm(category, termDelta);
+        let total = this.calculateTotalByTerm(category, startDate);
         resolve(total);
       }
     });
   
   }
 
-  getTotal(startCategory: Category, termDelta = 0): Promise<number> {
+  getTotal(startCategory: Category, startDate: Date): Promise<number> {
     //if there is no parent map, get it
     if(!startCategory.parentId && this.parentMap){
       this.getAllAranged(); 
       return new Promise((resolve)=>{
         Promise.all(
           this.parentMap[startCategory.id]
-          .map( c => this.getCategoryTotal(c, termDelta))
-          .concat(this.getCategoryTotal(startCategory, termDelta))
+          .map( c => this.getCategoryTotal(c, startDate))
+          .concat(this.getCategoryTotal(startCategory, startDate))
         ).then( (totals: any[]) => {
           let total = Util.sumExpenses(totals);
           resolve(total);
@@ -115,22 +115,23 @@ export class CategoryService extends AbstractTableService<Category> {
       })
     }
     else{
-      return this.getCategoryTotal(startCategory, termDelta);
+      return this.getCategoryTotal(startCategory, startDate);
     }
        
   }
 
-  private calculateTotalByTerm(category: Category, termDelta: number): number{
+  private calculateTotalByTerm(category: Category, startDate: Date): number{
     let earliestDate;
     let latestDate;
-    if(category.term === Term.Monthly){
-      earliestDate = TermUtils.getTermStartDate(Term.Monthly);
-      latestDate = TermUtils.getTermEndDate(Term.Monthly);
+    if(category.term == Term.Monthly){
+      earliestDate = TermUtils.getMonthStart(startDate);
+      latestDate = TermUtils.getMonthEnd(startDate);
     }
     else{
+      //TODO: potentially refactor in future to take start date as the beginning of the term
       earliestDate = category.rollOverStartDate;
       latestDate = new Date();
-      console.log("calculating", category.name, "with terms", earliestDate, "to", latestDate);
+      //console.log("calculating", category.name, "with terms", earliestDate, "to", latestDate);
     }
     return this.calculateTotalByDate(category, earliestDate, latestDate);
   }

@@ -12,6 +12,14 @@ export const TermDropdownLabels = [
 ]
 
 export class TermUtils { 
+
+  static getMonthStart(date: Date){
+   return moment(date).startOf('month').toDate()
+  }
+
+  static getMonthEnd(date: Date){
+   return moment(date).endOf('month').toDate()
+  }
   
   static getTermStartDate(term: Term, termDelta = 0): Date{
       if(term == Term.Monthly){
