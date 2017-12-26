@@ -4,7 +4,7 @@
         <h1>{{getHeader()}}      {{getTotal() | safeCurrency}}</h1>
       </td>
       <td class="text-center" [ngStyle]="{width : '50%'}">
-        <app-month-selector [selectedDate]="displayMonth" (onSelect)="onSelectedMonthChange($event)"></app-month-selector>
+        <app-month-selector *ngIf="category && category.term == 0" [selectedDate]="displayMonth" (onSelect)="onSelectedMonthChange($event)"></app-month-selector>
       </td>
       <td class="text-right" [ngStyle]="{width : '25%'}">
         <a [routerLink]="categoryId ? '/progress' : '/accounts'" class="btn btn-sm btn-default pull-right">Back</a>

@@ -1,3 +1,4 @@
+import { Term } from '../../model/budgetTerm';
 import { Input, Output, Component, OnInit } from '@angular/core';
 import { Expense } from "../../model/expense";
 import { DropdownModule, DataTableModule, SharedModule } from 'primeng/primeng';
@@ -42,6 +43,27 @@ export class ExpenseViewerComponent implements OnInit {
     private accountService: AccountService
   ) { }
 
+  ngOnInit() {
+    this.route.queryParams.subscribe(
+      params => {
+        this.accountId = params['accountId']
+        this.categoryId = params['categoryId'];
+        let month = params['month'];
+        if(month){
+          this.displayMonth = new Date(month);
+        }
+
+        let categories = this.categoryService.getAll();
+        if(this.categoryId){
+          this.category = categories.find(c =>  c.id === +this.categoryId);  
+        }
+        this.categories = [{'label' : 'Uncategorized', 'value' : 0}].concat(this.categoryService.getArrangedLabels(categories));
+      });
+
+    this.getExpenses();
+    this.getAccount();
+  }
+
   getExpenses(){
     let expenseModel = new Expense();
     if(this.accountId){
@@ -51,9 +73,15 @@ export class ExpenseViewerComponent implements OnInit {
       expenseModel.categoryId = this.categoryId;
     }
     let dbFilter = new DBFilter();
-    dbFilter.earliestDate = TermUtils.getMonthStart(this.displayMonth);
-    dbFilter.latestDate = TermUtils.getMonthEnd(this.displayMonth);
+    if(this.category && this.category.term == Term.OneTime){
+      dbFilter.earliestDate = this.category.rollOverStartDate;
+      dbFilter.latestDate = new Date();
+    } else{
+      dbFilter.earliestDate = TermUtils.getMonthStart(this.displayMonth);
+      dbFilter.latestDate = TermUtils.getMonthEnd(this.displayMonth);
+    }
     dbFilter.dateField = "date";
+
 
     //sort by date then id so that newest on is always on top
     this.expenses = this.expenseService
@@ -84,27 +112,6 @@ export class ExpenseViewerComponent implements OnInit {
       return this.category.name; 
     }
     return "Expenses";
-  }
-
-  ngOnInit() {
-    this.route.queryParams.subscribe(
-      params => {
-        this.accountId = params['accountId']
-        this.categoryId = params['categoryId'];
-        let month = params['month'];
-        console.log(params);
-        if(month){
-          this.displayMonth = new Date(month);
-        }
-        this.getExpenses();
-        this.getAccount();
-
-        let categories = this.categoryService.getAll();
-        if(this.categoryId){
-          this.category = categories.find(c =>  c.id === +this.categoryId);  
-        }
-        this.categories = [{'label' : 'Uncategorized', 'value' : 0}].concat(this.categoryService.getArrangedLabels(categories));
-      });
   }
 
   getAccount(){
