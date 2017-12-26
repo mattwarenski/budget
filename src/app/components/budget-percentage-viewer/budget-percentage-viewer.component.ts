@@ -35,7 +35,7 @@ export class BudgetPercentageViewerComponent implements OnInit {
               'total' : category.budgetAmount,
               'amount' :  -total ,
               'isOneTime' : category.term == Term.OneTime,
-              'isRollover' : category.isRollover,
+              'isRollover' : category.isRollover ? true : false,
               'isParent' : (!category.parentId ? true : false), 
               'id' : category.id
             };

@@ -1,9 +1,9 @@
 <div class="form-inline">
-  <div class="form-group">
+  <div class="form-group" >
     <label for="progress-bar" [ngStyle]="{'min-width' : '300px', 'font-size' : '13pt'}">{{title}}</label>
     <span *ngIf="isOneTime" class="label label-info">One Time</span>
     <span *ngIf="isRollover" class="label label-info">Rollover</span>
-    <div class="progress">
+    <div class="progress" [ngStyle]="{width : '350px'}">
       <div class="progress-bar" [ngClass]="getStyleClass()" [ngStyle]="{'width' : getRoundedPercentage()}">
         <!--<span class="text-center text-bold">{{percentage}}%</span>-->
       </div>
