@@ -114,7 +114,6 @@ export class CategoryViewerComponent implements OnInit{
 
   private updateCategoryTotal(){
     this.currentTotal = this.categoryService.getTotal(this.selectedCategory,new Date());
-    console.log("new total", this.currentTotal);
   }
 
   isOneTime(): boolean {
