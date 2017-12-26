@@ -76,8 +76,8 @@
         </div>
         <div class="col-md-4">
           <p>
-            <b>Total Spent:</b> {{(currentCategoryTotal | async) | safeCurrency }}<br>
-            <b>Amount Left:</b> {{(selectedCategory.budgetAmount + (currentCategoryTotal | async) | safeCurrency)}}<br>
+            <b>Total Spent:</b> {{currentTotal | safeCurrency }}<br>
+            <b>Amount Left:</b> {{(selectedCategory.budgetAmount + currentTotal | safeCurrency)}}<br>
           </p>
           <p *ngIf="!isOneTime() && selectedCategoryHasRolloverDate()">
             <b>Rollover Amount:</b> {{categoryService.getRolloverTotal(selectedCategory) | safeCurrency }}

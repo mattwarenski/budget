@@ -9,51 +9,53 @@ import { TermUtils, Term } from '../model/budgetTerm';
 import { DBFilter } from 'sqlite-base/DBFilter';
 import * as moment from 'moment';
 import { Util } from '../../util';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class CategoryService extends AbstractTableService<Category> {
 
-  private parentMap: any;
-
-
-  constructor(private __sqlService: SqlService) {
-    super(Category, __sqlService);
+  constructor(private __sqlService: SqlService, private router: Router) {
+    super(Category, __sqlService, router);
   }
 
-  getAllAranged(){
+  getAllAranged(categories: Category[]){
+    return this.getMapAndCategoriesArranged(categories)[0];
+  }
+
+  private getMapAndCategoriesArranged(entities: Category[]): [any[], any]{
     let childCategories = {};
-    this.parentMap = {};
-    this.entities.forEach((category: Category)=>{
+    let parentMap = {};
+    entities.forEach((category: Category)=>{
       if(category.parentId){
         childCategories[category.parentId] ? childCategories[category.parentId].push(category) : childCategories[category.parentId] = [category];
       }  
     });
 
-    let parentCategories =  this.sortAlphabetically(this.entities.filter(
+    let parentCategories =  this.sortAlphabetically(entities.filter(
       (category: Category)=> !category.parentId && category.id));
 
 
    let categories = [];
    parentCategories.forEach((c: Category)=>{
      categories.push(c)
-     this.parentMap[c.id] = [];
+     parentMap[c.id] = [];
      if(childCategories[c.id]){
          let sorted = this.sortAlphabetically(childCategories[c.id])
          .forEach( child =>{
            categories.push(child);
-           this.parentMap[c.id].push(child)
+           parentMap[c.id].push(child)
          });
      }
    });
 
-    return categories;
+    return [categories, parentMap];
   }
 
   /**
    * Returns category labels with parents sorted alphabetically and children sorted alphabetically after them
    */
-  getArrangedLabels(){
-    return this.getAllAranged().map((cat : Category) => {
+  getArrangedLabels(entities: Category[]){
+    return this.getAllAranged(entities).map((cat : Category) => {
       if(cat.parentId){
         return { label : cat.name, "value": cat.id }
       } 
@@ -75,76 +77,60 @@ export class CategoryService extends AbstractTableService<Category> {
       console.error("Cannot determine roll over total for category. Start date in future", category);
     }
     //total from start until today
-    let total = this.calculateTotalByDate(category, category.rollOverStartDate, null); 
+    let total = this.getTotalWithDates(category, category.rollOverStartDate, null); 
     //1 for the current month since the current date - the current month would be 0
     let numMonths = moment(today).diff(category.rollOverStartDate, 'months') + 1;
     return (numMonths * category.budgetAmount) + total;
   }
 
-  private getCategoryTotal(category: Category, startDate: Date): Promise<number>{
-    return new Promise((resolve)=>{
-      if(!this.db){
-        this.__sqlService.getDB(
-          (db: DataBase)=> {
-            this.db = db;
-            let total = this.calculateTotalByTerm(category, startDate);
-            resolve(total);
-          });
-      }
-      else{
-        let total = this.calculateTotalByTerm(category, startDate);
-        resolve(total);
-      }
-    });
-  
-  }
-
-  getTotal(startCategory: Category, startDate: Date): Promise<number> {
+  getTotal(startCategory: Category, startDate: Date): number {
     //if there is no parent map, get it
-    if(!startCategory.parentId && this.parentMap){
-      this.getAllAranged(); 
-      return new Promise((resolve)=>{
-        Promise.all(
-          this.parentMap[startCategory.id]
-          .map( c => this.getCategoryTotal(c, startDate))
-          .concat(this.getCategoryTotal(startCategory, startDate))
-        ).then( (totals: any[]) => {
-          let total = Util.sumExpenses(totals);
-          resolve(total);
-        });
-      })
+    if(!this.isValidDate(startDate)){
+      startDate = new Date(); 
     }
-    else{
-      return this.getCategoryTotal(startCategory, startDate);
-    }
-       
-  }
 
-  private calculateTotalByTerm(category: Category, startDate: Date): number{
     let earliestDate;
     let latestDate;
-    if(category.term == Term.Monthly){
+    if(startCategory.term == Term.Monthly){
       earliestDate = TermUtils.getMonthStart(startDate);
       latestDate = TermUtils.getMonthEnd(startDate);
     }
     else{
       //TODO: potentially refactor in future to take start date as the beginning of the term
-      earliestDate = category.rollOverStartDate;
+      if(this.isValidDate(startCategory.rollOverStartDate)){
+        earliestDate = startCategory.rollOverStartDate;
+      }
+      else{
+        earliestDate = TermUtils.getMonthStart(new Date()); 
+      }
       latestDate = new Date();
-      //console.log("calculating", category.name, "with terms", earliestDate, "to", latestDate);
     }
-    return this.calculateTotalByDate(category, earliestDate, latestDate);
+
+    return this.getTotalWithDates(startCategory, earliestDate, latestDate);
   }
 
-  private calculateTotalByDate(category: Category, earliestDate: Date, latestDate: Date): number{
+  private getTotalWithDates(category: Category, earliestDate: Date, latestDate: Date): number{
     let dbFilter = new DBFilter();
     dbFilter.earliestDate = earliestDate;
     dbFilter.latestDate = latestDate;
     dbFilter.dateField = "date";
+    let filter = new Expense();
+    let amount = 0;
+    if(!category.parentId){
+      let childCategoryFilter = new Category();
+      childCategoryFilter.parentId = category.id;
+      let children = this.db.getRows(childCategoryFilter);
+      children.forEach(child=>{
+        filter.categoryId = child.id;
+        amount += this.db.sum(filter, 'amount', dbFilter); 
+      })
+    }
 
-    let expense = new Expense();
-    expense.categoryId = category.id;
+    filter.categoryId = category.id;
+    return this.db.sum(filter, 'amount', dbFilter);
+  }
 
-    return Util.sumExpenses(this.db.getRows(expense, dbFilter));
+  private isValidDate(date: Date): boolean{
+    return date && date instanceof Date && date.toString() !== 'Invalid Date'; 
   }
 }

@@ -13,6 +13,7 @@ export class BudgetProgressBarComponent implements OnInit {
   @Input() categoryId: number;
   @Input() month: string;
   @Input() isOneTime: boolean;
+  @Input() isRollover: boolean;
   percentage: number;
 
   constructor() { }

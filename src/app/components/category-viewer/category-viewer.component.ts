@@ -1,10 +1,8 @@
 import { Term } from '../../model/budgetTerm';
 import { Category } from "../../model/category";
 import { CategoryService } from "../../services/category.service";
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from "rxjs/Subscription";
+import { Component, OnInit } from '@angular/core';
 import { TermDropdownLabels } from '../../model/budgetTerm';
-import { Observable } from 'rxjs';
 import * as moment from 'moment';
 
 @Component({
@@ -12,7 +10,7 @@ import * as moment from 'moment';
   templateUrl: './category-viewer.component.html',
   styleUrls: ['./category-viewer.component.css']
 })
-export class CategoryViewerComponent implements OnInit, OnDestroy{
+export class CategoryViewerComponent implements OnInit{
 
   constructor(private categoryService: CategoryService) { }
   categories: any[];
@@ -20,41 +18,34 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
   categoryList: any[];
   terms = TermDropdownLabels;
   selectedCategory: Category;
-  categorySubscription: Subscription;
-  currentCategoryTotal: Observable<number>;
+  currentTotal: number;
   editingNew: boolean;
   moment = moment;
 
 
   ngOnInit() {
-    this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[])=>{
-      this.categories = categories;
-      this.categoryList = this.categoryService.getArrangedLabels();
-      if(this.categories.length){
-        if(!this.selectedCategory){
-          this.selectedCategory = this.categories[0]; 
-          this.updateCategoryTotal();
-        }
-        else{
-          this.selectedCategory = this.categories.find( c => c.name === this.selectedCategory.name); 
-        }
-        this.parentCategories = this.getParentCategories();
+    this.categories = this.categoryService.getAll();
+    this.categoryList = this.categoryService.getArrangedLabels(this.categories);
+    if(this.categories.length){
+      if(!this.selectedCategory){
+        this.selectedCategory = this.categories[0]; 
+        this.updateCategoryTotal();
       }
       else{
-        this.selectedCategory = null;
-        this.parentCategories = null;
+        this.selectedCategory = this.categories.find( c => c.name === this.selectedCategory.name); 
       }
-    });
-  }
-
-  ngOnDestroy(){
-    this.categorySubscription.unsubscribe();
+      this.parentCategories = this.getParentCategories();
+    }
+    else{
+      this.selectedCategory = null;
+      this.parentCategories = null;
+    }
   }
 
   getParentCategories(): any[]{
     let parentCategories =  this.categories.filter(
       (category: Category)=>!category.parentId && category.id !== this.selectedCategory.id);
-    let mappedCategories = this.categoryService.getArrangedLabels();
+    let mappedCategories = this.categoryService.getArrangedLabels(this.categories);
     return [{label : "None", value : 0}].concat(mappedCategories);
   }
 
@@ -122,7 +113,8 @@ export class CategoryViewerComponent implements OnInit, OnDestroy{
   }
 
   private updateCategoryTotal(){
-    this.currentCategoryTotal = Observable.fromPromise(this.categoryService.getTotal(this.selectedCategory,new Date()));
+    this.currentTotal = this.categoryService.getTotal(this.selectedCategory,new Date());
+    console.log("new total", this.currentTotal);
   }
 
   isOneTime(): boolean {

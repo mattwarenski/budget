@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CategoryService } from '../../services/category.service';
 import { Category } from '../../model/category';
-import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 import { Term } from '../../model/budgetTerm';
 
@@ -12,7 +11,6 @@ import { Term } from '../../model/budgetTerm';
 })
 export class BudgetPercentageViewerComponent implements OnInit {
 
-  categorySubscription: Subscription;
   categoryMetadata: any[];
   selectedDate: Date;
 
@@ -25,28 +23,23 @@ export class BudgetPercentageViewerComponent implements OnInit {
   }
 
   getTotals(){
-    if(this.categorySubscription){
-      this.categorySubscription.unsubscribe(); 
-    }
     if(!this.selectedDate){
       this.selectedDate = new Date(); 
     }
 
-    this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[])=>{
-      categories = this.categoryService.getAllAranged();
-      Promise.all(categories.map( category => this.categoryService.getTotal(category, this.selectedDate)))
-        .then( totals =>{
-          this.categoryMetadata = totals.map( (total, index) => {
-            return  { 'title' : categories[index].name,
-              'total' : categories[index].budgetAmount,
+    let categories = this.categoryService.getAll();
+    this.categoryMetadata = this.categoryService.getAllAranged(categories)
+      .map( category => {
+            let total = this.categoryService.getTotal(category, this.selectedDate);
+            return  { 'title' : category.name,
+              'total' : category.budgetAmount,
               'amount' :  -total ,
-              'isOneTime' : categories[index].term == Term.OneTime,
-              'isParent' : (!categories[index].parentId ? true : false), 
-              'id' : categories[index].id
+              'isOneTime' : category.term == Term.OneTime,
+              'isRollover' : category.isRollover,
+              'isParent' : (!category.parentId ? true : false), 
+              'id' : category.id
             };
-          });
-        });
-    });
+      });
   }
 
   onSelectedMonthChange(selectedDate: Date){

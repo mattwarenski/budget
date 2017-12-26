@@ -1,4 +1,4 @@
-import { Input, Output, Component, OnInit, OnDestroy } from '@angular/core';
+import { Input, Output, Component, OnInit } from '@angular/core';
 import { Expense } from "../../model/expense";
 import { DropdownModule, DataTableModule, SharedModule } from 'primeng/primeng';
 import { CurrencyPipe } from '@angular/common';
@@ -7,7 +7,6 @@ import { DataBase } from "sqlite-base/DataBase";
 import { Category } from "../../model/category";
 import { CategoryService } from "../../services/category.service";
 import { ExpenseService } from "../../services/expense.service";
-import { Subscription } from "rxjs/Subscription";
 import { DataTable } from 'primeng/components/datatable/datatable';
 import { Account } from '../../model/account';
 import { DBFilter } from 'sqlite-base/DBFilter';
@@ -16,7 +15,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Params } from '@angular/router/src/shared';
 import { Util } from '../../../util';
 import { AccountService } from '../../services/account.service';
-import { take } from 'rxjs/operator/take';
 import { TermUtils } from '../../model/budgetTerm';
 
 @Component({
@@ -25,10 +23,7 @@ import { TermUtils } from '../../model/budgetTerm';
   styleUrls: ['./expense-viewer.component.css'],
   providers: [ExpenseService]
 })
-export class ExpenseViewerComponent implements OnInit, OnDestroy {
-  expenseSubscription: Subscription;
-  categorySubscription: Subscription;
-  accountSubscription: Subscription;
+export class ExpenseViewerComponent implements OnInit {
   expenses: Expense[] = [];
   selectedRow;
   categories;
@@ -60,17 +55,10 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
     dbFilter.latestDate = TermUtils.getMonthEnd(this.displayMonth);
     dbFilter.dateField = "date";
 
-    if(this.expenseSubscription){
-      this.expenseSubscription.unsubscribe();
-    }
-
-
-    this.expenseSubscription = this.expenseService.getAll(expenseModel, dbFilter).subscribe((expenses: Expense[])=>{
-      //sort by date then id so that newest on is always on top
-      let sorted = expenses.sort((a: Expense, b: Expense) => (+b.date) - (+a.date) || b.id - a.id);
-      this.expenses = [];
-      this.expenses = this.expenses.concat(sorted);
-    });
+    //sort by date then id so that newest on is always on top
+    this.expenses = this.expenseService
+      .getAll(expenseModel, dbFilter)
+      .sort((a: Expense, b: Expense) => (+b.date) - (+a.date) || b.id - a.id);
   }
 
   getTotal(){
@@ -110,37 +98,23 @@ export class ExpenseViewerComponent implements OnInit, OnDestroy {
         }
         this.getExpenses();
         this.getAccount();
-        this.categorySubscription = this.categoryService.getAll().subscribe((categories: Category[]) => {
-          if(this.categoryId){
-            this.category = categories.find(c =>  c.id === +this.categoryId);  
-          }
-          this.categories = [{'label' : 'Uncategorized', 'value' : 0}].concat(this.categoryService.getArrangedLabels());
-        });
-      })
+
+        let categories = this.categoryService.getAll();
+        if(this.categoryId){
+          this.category = categories.find(c =>  c.id === +this.categoryId);  
+        }
+        this.categories = [{'label' : 'Uncategorized', 'value' : 0}].concat(this.categoryService.getArrangedLabels(categories));
+      });
   }
 
   getAccount(){
     if(this.accountId){
       let filter = new Account();
       filter.id = this.accountId;
-      if(this.accountSubscription){
-        this.accountSubscription.unsubscribe(); 
-      }
-      this.accountSubscription = this.accountService.getAll(filter).subscribe((accounts: Account[]) => {
-        if(accounts.length){
-          this.account = accounts[0];
-        }  
-      });
-    }
-  }
-
-  ngOnDestroy(){
-    this.categorySubscription.unsubscribe();
-    if(this.accountSubscription){
-      this.accountSubscription.unsubscribe();
-    }
-    if(this.expenseSubscription){
-      this.expenseSubscription.unsubscribe();
+      let accounts = this.accountService.getAll(filter);
+      if(accounts.length){
+        this.account = accounts[0];
+      }  
     }
   }
 

@@ -2,7 +2,6 @@ import { Account } from '../../model/account';
 import { AccountService } from "../../services/account.service";
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from "rxjs/Subscription";
-import { OnDestroy } from "@angular/core";
 import { SafeCurrencyPipe } from '../../pipes/safe-currency.pipe';
 import { Router } from '@angular/router';
 import { Util } from '../../../util';
@@ -14,11 +13,10 @@ import { Expense } from '../../model/expense';
   templateUrl: './account-selector.component.html',
   providers: [ExpenseService]
 })
-export class AccountSelectorComponent implements OnInit, OnDestroy {
+export class AccountSelectorComponent implements OnInit {
   accounts: Account[];
   selectedAccount: Account;
   editing: boolean;
-  accountSubscription: Subscription
   selectedDate: Date;
   accountTotals = {};
 
@@ -29,20 +27,13 @@ export class AccountSelectorComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.accountSubscription = this.accountService.getAll().subscribe((accounts: Account[])=>{
-      this.accounts = accounts;
-      this.accounts.forEach( (account: Account) => {
+    console.log("initializing");
+    this.accounts = this.accountService.getAll();
+    this.accounts.forEach( (account: Account) => {
         let filter = new Expense();
         filter.accountId = account.id;
-        this.expenseService.getAll(filter).take(1).subscribe((expenses => {
-          this.accountTotals[account.id] = Util.sumExpenses(expenses); 
-        }))
+        this.accountTotals[account.id] = this.expenseService.getExpenseSum(filter);
       });
-    });
-  }
-
-  ngOnDestroy(){
-    this.accountSubscription.unsubscribe(); 
   }
 
   onEditComplete(data){

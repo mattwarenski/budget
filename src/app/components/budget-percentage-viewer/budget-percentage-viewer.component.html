@@ -16,7 +16,7 @@
         <h3>{{category.title}} - {{category.amount | safeCurrency}}</h3>
       </div>
       <div *ngIf="category.total" [ngStyle]="{'margin-left' : '10px'}">
-        <app-budget-progress-bar  [title]="category.title" [month]="selectedDate.toString()" [isOneTime]="category.isOneTime" [amount]="category.amount" [total]="category.total" [categoryId]="category.id"></app-budget-progress-bar>
+        <app-budget-progress-bar  [title]="category.title" [month]="selectedDate.toString()" [isRollover]="selectedDate.isRollover" [isOneTime]="category.isOneTime" [amount]="category.amount" [total]="category.total" [categoryId]="category.id"></app-budget-progress-bar>
       </div>
     </div>
   </div>
