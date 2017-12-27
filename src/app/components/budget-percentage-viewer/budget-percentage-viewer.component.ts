@@ -11,39 +11,23 @@ import { Term } from '../../model/budgetTerm';
 })
 export class BudgetPercentageViewerComponent implements OnInit {
 
-  categoryMetadata: any[];
   selectedDate: Date;
+  categories: Category[]
 
   constructor(
     private categoryService: CategoryService 
   ) { }
 
   ngOnInit() {
-    this.getTotals();
-  }
-
-  getTotals(){
     if(!this.selectedDate){
       this.selectedDate = new Date(); 
     }
-
-    let categories = this.categoryService.getAll();
-    this.categoryMetadata = this.categoryService.getAllAranged(categories)
-      .map( category => {
-            let total = this.categoryService.getTotal(category, this.selectedDate);
-            return  { 'title' : category.name,
-              'total' : category.budgetAmount,
-              'amount' :  -total ,
-              'isOneTime' : category.term == Term.OneTime,
-              'isRollover' : category.isRollover ? true : false,
-              'isParent' : (!category.parentId ? true : false), 
-              'id' : category.id
-            };
-      });
+    this.categories = this.categoryService.getAllAranged(this.categoryService.getAll());
   }
 
   onSelectedMonthChange(selectedDate: Date){
     this.selectedDate = selectedDate; 
-    this.getTotals();
+    //hack: reassign so change detection updates
+    this.categories = this.categoryService.getAllAranged(this.categoryService.getAll());
   }
 }

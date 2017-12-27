@@ -1,4 +1,6 @@
+import { Category } from '../../model/category';
 import { Input, Component, OnInit } from '@angular/core';
+import { CategoryService } from '../../services/category.service';
 
 @Component({
   selector: 'app-budget-progress-bar',
@@ -7,19 +9,24 @@ import { Input, Component, OnInit } from '@angular/core';
 })
 export class BudgetProgressBarComponent implements OnInit {
 
-  @Input() total: number;
-  @Input() amount: number;
-  @Input() title: string;
-  @Input() categoryId: number;
-  @Input() month: string;
-  @Input() isOneTime: boolean;
-  @Input() isRollover: boolean;
+  @Input() category: Category;
+  @Input() selectedDate: string;
+  total: number;
   percentage: number;
+  dateString: string;
+  rollOverAmount: number;
 
-  constructor() { }
+  constructor(
+    private categoryService: CategoryService 
+  ) { }
 
   ngOnInit() {
-    this.percentage = Math.round((this.amount / this.total) * 100);
+    this.total = -this.categoryService.getTotal(this.category, new Date(this.selectedDate))
+    this.percentage = Math.round((this.total / this.category.budgetAmount) * 100);
+    this.dateString = this.selectedDate.toString();
+    if(this.category.isRollover){
+      this.rollOverAmount = this.categoryService.getRolloverTotal(this.category); 
+    }
   }
 
   getStyleClass() {

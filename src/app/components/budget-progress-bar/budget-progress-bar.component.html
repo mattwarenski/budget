@@ -1,8 +1,8 @@
 <div class="form-inline">
   <div class="form-group" >
-    <label for="progress-bar" [ngStyle]="{'min-width' : '300px', 'font-size' : '13pt'}">{{title}}</label>
-    <span *ngIf="isOneTime" class="label label-info">One Time</span>
-    <span *ngIf="isRollover" class="label label-info">Rollover</span>
+    <label for="progress-bar" [ngStyle]="{'min-width' : '300px', 'font-size' : '13pt'}">{{category.name}}</label>
+    <span *ngIf="category.term == 1" class="label label-info">One Time</span>
+    <span *ngIf="category.isRollover" class="label label-info">Rollover Amount: {{rollOverAmount | safeCurrency}}</span>
     <div class="progress" [ngStyle]="{width : '350px'}">
       <div class="progress-bar" [ngClass]="getStyleClass()" [ngStyle]="{'width' : getRoundedPercentage()}">
         <!--<span class="text-center text-bold">{{percentage}}%</span>-->
@@ -10,6 +10,6 @@
     </div>
   </div>
   <div class="form-group text-middle" [ngStyle]="{'margin-left' : '15px', 'margin-top' : '25px'}">
-    <h5><a routerLink="/expenses" [queryParams]="{'categoryId' : categoryId, 'month' : month}">{{amount | safeCurrency}}/{{total | safeCurrency}}</a></h5>
+    <h5><a routerLink="/expenses" [queryParams]="{'categoryId' : category.id, 'month' : selectedDate}">{{total | safeCurrency}}/{{category.budgetAmount | safeCurrency}}</a></h5>
   </div>
 </div>

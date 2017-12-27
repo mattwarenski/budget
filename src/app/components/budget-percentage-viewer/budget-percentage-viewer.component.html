@@ -11,12 +11,12 @@
 </table>
 <div [ngStyle]='{ "margin-left" : "15px"}'>
   <div [ngStyle]='{ "margin-left" : "15px"}'>
-    <div *ngFor="let category of categoryMetadata">
-      <div *ngIf="category.isParent">
-        <h3>{{category.title}} - {{category.amount | safeCurrency}}</h3>
+    <div *ngFor="let category of categories">
+      <div *ngIf="!category.parentId">
+        <h3>{{category.name}} - {{category.budgetAmount | safeCurrency}}</h3>
       </div>
-      <div *ngIf="category.total" [ngStyle]="{'margin-left' : '10px'}">
-        <app-budget-progress-bar  [title]="category.title" [month]="selectedDate.toString()" [isRollover]="category.isRollover" [isOneTime]="category.isOneTime" [amount]="category.amount" [total]="category.total" [categoryId]="category.id"></app-budget-progress-bar>
+      <div *ngIf="category.budgetAmount !== 0" [ngStyle]="{'margin-left' : '10px'}">
+        <app-budget-progress-bar  [category]="category" [selectedDate]="selectedDate"></app-budget-progress-bar>
       </div>
     </div>
   </div>
