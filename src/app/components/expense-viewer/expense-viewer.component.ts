@@ -21,8 +21,7 @@ import { TermUtils } from '../../model/budgetTerm';
 @Component({
   selector: 'app-expense-viewer',
   templateUrl: './expense-viewer.component.html',
-  styleUrls: ['./expense-viewer.component.css'],
-  providers: [ExpenseService]
+  styleUrls: ['./expense-viewer.component.css']
 })
 export class ExpenseViewerComponent implements OnInit {
   expenses: Expense[] = [];

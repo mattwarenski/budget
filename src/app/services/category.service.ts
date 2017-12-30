@@ -130,6 +130,35 @@ export class CategoryService extends AbstractTableService<Category> {
     return this.db.sum(filter, 'amount', dbFilter);
   }
 
+  getPostiveAndNegativeRolloverTotals(categories: Category[]): [number, number]{
+    let positiveTotal = 0;
+    let negativeTotal = 0;
+    categories.forEach( category => {
+      if(!category.isRollover){
+        return; 
+      }
+      const catTotal = this.getRolloverTotal(category); 
+      if(catTotal > 0){
+        positiveTotal += catTotal;  
+      }
+      //this else if filters out NaN
+      else if(catTotal < 0){
+        negativeTotal += catTotal; 
+      }
+    })
+    return [positiveTotal, negativeTotal];
+  }
+
+  getTotalBudgetedForMonth(){
+    let categoryFilter = new Category();
+    categoryFilter.term = Term.Monthly;
+    return this.getSum('budgetAmount', categoryFilter);
+  }
+
+  getTotalBudgeted(){
+    return this.getSum('budgetAmount', new Category());
+  }
+
   private isValidDate(date: Date): boolean{
     return date && date instanceof Date && date.toString() !== 'Invalid Date'; 
   }

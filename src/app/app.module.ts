@@ -16,6 +16,7 @@ import { BudgetProgressBarComponent } from './components/budget-progress-bar/bud
 import { SafeCurrencyPipe } from './pipes/safe-currency.pipe';
 import { MonthSelectorComponent } from './components/month-selector/month-selector.component';
 import { AppRoutingModule } from './app-routing.module';
+import { ExpenseService } from './services/expense.service';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { AppRoutingModule } from './app-routing.module';
     CategoryService,
     AccountService,
     LayoutService,
+    ExpenseService
   ],
   bootstrap: [AppComponent]
 })

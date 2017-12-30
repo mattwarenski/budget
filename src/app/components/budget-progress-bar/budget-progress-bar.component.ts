@@ -29,6 +29,7 @@ export class BudgetProgressBarComponent implements OnInit {
     }
   }
 
+
   getStyleClass() {
     if(this.percentage < 100){
       return "progress-bar-success";
