@@ -71,6 +71,13 @@ export class CategoryViewerComponent implements OnInit{
     }
   }
 
+  onTermChange(term){
+    if(this.selectedCategory.term == Term.OneTime){
+      this.selectedCategory.isRollover = false;
+    }
+    this.updateCategory(); 
+  }
+
   selectedCategoryHasRolloverDate(){
     return this.selectedCategory.isRollover && moment(this.selectedCategory.rollOverStartDate).isValid();
   }

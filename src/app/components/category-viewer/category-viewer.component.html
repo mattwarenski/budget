@@ -66,13 +66,13 @@
         <p-dropdown
            [options]="terms"
            [(ngModel)]="selectedCategory.term"
-           (onChange)="updateCategory($event)"
+           (onChange)="onTermChange($event)"
            [style]="{'min-width' : '140px'}"
            id="term-select">
         </p-dropdown>
       </div>
       <div *ngIf="!isOneTime()" class="form-group">
-        <b>Is Rollover Budget:</b> <input type="checkbox" (change)="onIsRolloverChange()" [(ngModel)]="selectedCategory.isRollover"> 
+        <b>Is Rollover Budget:</b> <input type="checkbox" (change)="updateCategory()" [(ngModel)]="selectedCategory.isRollover"> 
       </div>
       <div *ngIf="(isOneTime() || selectedCategory.isRollover) && selectedCategory.rollOverStartDate" class="form-group">
         <b>{{isOneTime() ? "One Time Start:" : "Rollover Start Date:"}}</b><br>
