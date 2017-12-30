@@ -1,91 +1,82 @@
-<div [ngStyle]='{ "margin-left" : "15px"}'>
-  <h1>Categories:</h1>
-  <div [ngStyle]='{ "margin-left" : "15px"}'>
-    <div class="text-left">
-      <div class="form-inline">
-        <div class="form-group">
-          <label for="category-select">Category:</label>
-          <p-dropdown
-                 [filter]="true"
-                 [options]="categoryList"
-                 (onChange)="onCategorySelect($event)"
-                 [ngModel]="selectedCategory?.id"
-                 [style]="{'min-width' : '240px'}"
-                 [disabled]="editingNew"
-                 id="category-select">
-
-            <ng-template let-category pTemplate="item">
-              <div class="ui-helper-clearfix" style="position: relative;height: 20px;">
-                <div *ngIf="category.parent; else child">
-                  <b>{{category.label}}</b>
-                </div>
-                <ng-template #child>
-                  <div [ngStyle]="{'margin-left' : '15px'}">{{category.label}}</div>
-                </ng-template>
-              </div>
-            </ng-template>
-          </p-dropdown>
+<h1>Categories</h1>
+<div class="form-inline">
+  <div class="form-group">
+    <label for="category-select">Category:</label>
+    <p-dropdown
+           [filter]="true"
+           [options]="categoryList"
+           (onChange)="onCategorySelect($event)"
+           [ngModel]="selectedCategory?.id"
+           [style]="{'min-width' : '240px'}"
+           [disabled]="editingNew"
+           id="category-select">
+      <ng-template let-category pTemplate="item">
+        <div class="ui-helper-clearfix" style="position: relative;height: 20px;">
+          <div *ngIf="category.parent; else child">
+            <b>{{category.label}}</b>
+          </div>
+          <ng-template #child>
+            <div [ngStyle]="{'margin-left' : '15px'}">{{category.label}}</div>
+          </ng-template>
         </div>
-        <div class="form-group">
-          <a><span (click)="addCategory()" class="glyphicon glyphicon-plus text-success"></span></a>
-          <a><span (click)="removeCategory()" class="glyphicon glyphicon-trash text-danger"></span></a>
-        </div>
+      </ng-template>
+    </p-dropdown>
+  </div>
+  <div class="form-group">
+    <a><span (click)="addCategory()" class="glyphicon glyphicon-plus text-success"></span></a>
+    <a><span (click)="removeCategory()" class="glyphicon glyphicon-trash text-danger"></span></a>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <h2>Category Info</h2>
+    <div *ngIf="selectedCategory" class="left-margin">
+      <div class="form-group">
+        <b>Name:</b><br>
+        <input class="input input-sm form-control"
+               id="name-input"
+               (change)="updateCategory()"
+               [(ngModel)]="selectedCategory.name">
       </div>
-      <div *ngIf="selectedCategory" class="row" [ngStyle]="{'margin-left' : '30px', 'padding-top' : '10px'}">
-        <div class="col-md-4">
-          <div class="form-group">
-            <label for="name-input">Name:</label>
-            <input class="input-sm form-control"
-                   id="name-input"
-                   (change)="updateCategory()"
-                   [(ngModel)]="selectedCategory.name">
-          </div>
-          <div class="form-group">
-            <label for="amount-input">Amount:</label>
-            <input class="input-sm form-control"
-                   id="amount-input"
-                   (change)="updateCategory()"
-                   [(ngModel)]="selectedCategory.budgetAmount">
-          </div>
-          <div *ngIf="selectedCategory?.budgetAmount > 0">
-            <div class="form-group">
-              <b>Term:</b><br>
-              <p-dropdown
-                 [options]="terms"
-                 [(ngModel)]="selectedCategory.term"
-                 (onChange)="updateCategory($event)"
-                 [style]="{'min-width' : '140px'}"
-                 id="term-select"></p-dropdown>
-            </div>
-            <div class="form-group">
-              <b>Parent Category:</b><br>
-              <p-dropdown
-                 [options]="parentCategories"
-                 [(ngModel)]="selectedCategory.parentId"
-                 (onChange)="updateCategory($event)"
-                 [disabled]="isParentCategory()"
-                 [style]="{'min-width' : '140px'}"
-                 id="parent-category-select"></p-dropdown>
-            </div>
-            <div *ngIf="!isOneTime()" class="form-group">
-              <b>Is Rollover Budget:</b> <input type="checkbox" (change)="onIsRolloverChange()" [(ngModel)]="selectedCategory.isRollover"> 
-            </div>
-            <div *ngIf="(isOneTime() || selectedCategory.isRollover) && selectedCategory.rollOverStartDate" class="form-group">
-              <b>{{isOneTime() ? "One Time Start:" : "Rollover Start Date:"}}</b><br>
-              <app-month-selector (onSelect)="updateRolloverStart($event)" [selectedDate]="selectedCategory.rollOverStartDate"></app-month-selector>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <p>
-          <b>Total Spent:</b> {{currentTotal | safeCurrency }}<br>
-          <b>Amount Left:</b> {{(selectedCategory.budgetAmount + currentTotal | safeCurrency)}}<br>
-          </p>
-          <p *ngIf="!isOneTime() && selectedCategoryHasRolloverDate()">
-          <b>Rollover Amount:</b> {{categoryService.getRolloverTotal(selectedCategory) | safeCurrency }}
-          </p>
-        </div>
+      <div class="form-group">
+        <b>Amount:</b><br>
+        <input class="input input-sm form-control"
+               id="amount-input"
+               (change)="updateCategory()"
+               [(ngModel)]="selectedCategory.budgetAmount">
+      </div>
+      <div class="form-group">
+        <b>Parent Category:</b><br>
+        <p-dropdown
+           [options]="parentCategories"
+           [(ngModel)]="selectedCategory.parentId"
+           (onChange)="updateCategory($event)"
+           [disabled]="isParentCategory()"
+           [style]="{'min-width' : '140px'}"
+           id="parent-category-select">
+        </p-dropdown>
       </div>
     </div>
   </div>
-</div>
+  <div class="col-md-6">
+    <h2>Category Options</h2>
+    <div *ngIf="selectedCategory && selectedCategory?.budgetAmount > 0" class="left-margin">
+      <div class="form-group">
+        <b>Term:</b><br>
+        <p-dropdown
+           [options]="terms"
+           [(ngModel)]="selectedCategory.term"
+           (onChange)="updateCategory($event)"
+           [style]="{'min-width' : '140px'}"
+           id="term-select">
+        </p-dropdown>
+      </div>
+      <div *ngIf="!isOneTime()" class="form-group">
+        <b>Is Rollover Budget:</b> <input type="checkbox" (change)="onIsRolloverChange()" [(ngModel)]="selectedCategory.isRollover"> 
+      </div>
+      <div *ngIf="(isOneTime() || selectedCategory.isRollover) && selectedCategory.rollOverStartDate" class="form-group">
+        <b>{{isOneTime() ? "One Time Start:" : "Rollover Start Date:"}}</b><br>
+        <app-month-selector (onSelect)="updateRolloverStart($event)" [selectedDate]="selectedCategory.rollOverStartDate"></app-month-selector>
+      </div>
+    </div>
+  </div>

@@ -8,7 +8,7 @@ import * as moment from 'moment';
 @Component({
   selector: 'app-category-viewer',
   templateUrl: './category-viewer.component.html',
-  styleUrls: ['./category-viewer.component.css']
+  styles : [""]
 })
 export class CategoryViewerComponent implements OnInit{
 
