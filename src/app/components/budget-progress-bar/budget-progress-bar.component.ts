@@ -40,6 +40,16 @@ export class BudgetProgressBarComponent implements OnInit {
     }
   }
 
+  getLabelStyleClass(){
+    if(this.rollOverAmount > 0){
+      return "label-success" 
+    }
+    else if(this.rollOverAmount < 0){
+      return "label-danger" 
+    }
+    return "label-warning" 
+  }
+
   getRoundedPercentage( ){
     let percent = this.percentage;
     if(percent > 100){

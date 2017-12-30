@@ -4,8 +4,8 @@
   <tr>
     <td [ngStyle]="{'width' : '440px'}">
       <label for="progress-bar" [ngStyle]="{'min-width' : '300px', 'font-size' : '12pt'}">{{category.name}}: 
-        <span *ngIf="category.term == 1" class="label label-info float-right">One Time</span>
-        <span *ngIf="category.isRollover" class="label label-info float-right">Rollover Amount: {{rollOverAmount | safeCurrency}}</span>
+        <span *ngIf="category.term == 1" class="label label-info" >One Time</span>
+        <span *ngIf="category.isRollover" [ngClass]="getLabelStyleClass()" class="label">Rollover Amount: {{rollOverAmount | safeCurrency}}</span>
       </label>
       <div class="progress" [ngStyle]="{width : '100%'}">
         <div class="progress-bar" [ngClass]="getStyleClass()" [ngStyle]="{'width' : getRoundedPercentage()}">
