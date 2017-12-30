@@ -47,40 +47,42 @@
                    (change)="updateCategory()"
                    [(ngModel)]="selectedCategory.budgetAmount">
           </div>
-          <div class="form-group">
-            <b>Term:</b><br>
-            <p-dropdown
-                   [options]="terms"
-                   [(ngModel)]="selectedCategory.term"
-                   (onChange)="updateCategory($event)"
-                   [style]="{'min-width' : '140px'}"
-                   id="term-select"></p-dropdown>
-          </div>
-          <div class="form-group">
-            <b>Parent Category:</b><br>
-            <p-dropdown
-                   [options]="parentCategories"
-                   [(ngModel)]="selectedCategory.parentId"
-                   (onChange)="updateCategory($event)"
-                   [disabled]="isParentCategory()"
-                   [style]="{'min-width' : '140px'}"
-                   id="parent-category-select"></p-dropdown>
-          </div>
-          <div *ngIf="!isOneTime()" class="form-group">
-            <b>Is Rollover Budget:</b> <input type="checkbox" (change)="onIsRolloverChange()" [(ngModel)]="selectedCategory.isRollover"> 
-          </div>
-          <div *ngIf="(isOneTime() || selectedCategory.isRollover) && selectedCategory.rollOverStartDate" class="form-group">
-            <b>{{isOneTime() ? "One Time Start:" : "Rollover Start Date:"}}</b><br>
-            <app-month-selector (onSelect)="updateRolloverStart($event)" [selectedDate]="selectedCategory.rollOverStartDate"></app-month-selector>
+          <div *ngIf="selectedCategory?.budgetAmount > 0">
+            <div class="form-group">
+              <b>Term:</b><br>
+              <p-dropdown
+                 [options]="terms"
+                 [(ngModel)]="selectedCategory.term"
+                 (onChange)="updateCategory($event)"
+                 [style]="{'min-width' : '140px'}"
+                 id="term-select"></p-dropdown>
+            </div>
+            <div class="form-group">
+              <b>Parent Category:</b><br>
+              <p-dropdown
+                 [options]="parentCategories"
+                 [(ngModel)]="selectedCategory.parentId"
+                 (onChange)="updateCategory($event)"
+                 [disabled]="isParentCategory()"
+                 [style]="{'min-width' : '140px'}"
+                 id="parent-category-select"></p-dropdown>
+            </div>
+            <div *ngIf="!isOneTime()" class="form-group">
+              <b>Is Rollover Budget:</b> <input type="checkbox" (change)="onIsRolloverChange()" [(ngModel)]="selectedCategory.isRollover"> 
+            </div>
+            <div *ngIf="(isOneTime() || selectedCategory.isRollover) && selectedCategory.rollOverStartDate" class="form-group">
+              <b>{{isOneTime() ? "One Time Start:" : "Rollover Start Date:"}}</b><br>
+              <app-month-selector (onSelect)="updateRolloverStart($event)" [selectedDate]="selectedCategory.rollOverStartDate"></app-month-selector>
+            </div>
           </div>
         </div>
         <div class="col-md-4">
           <p>
-            <b>Total Spent:</b> {{currentTotal | safeCurrency }}<br>
-            <b>Amount Left:</b> {{(selectedCategory.budgetAmount + currentTotal | safeCurrency)}}<br>
+          <b>Total Spent:</b> {{currentTotal | safeCurrency }}<br>
+          <b>Amount Left:</b> {{(selectedCategory.budgetAmount + currentTotal | safeCurrency)}}<br>
           </p>
           <p *ngIf="!isOneTime() && selectedCategoryHasRolloverDate()">
-            <b>Rollover Amount:</b> {{categoryService.getRolloverTotal(selectedCategory) | safeCurrency }}
+          <b>Rollover Amount:</b> {{categoryService.getRolloverTotal(selectedCategory) | safeCurrency }}
           </p>
         </div>
       </div>
