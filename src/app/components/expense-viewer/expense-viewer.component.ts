@@ -17,6 +17,7 @@ import { Params } from '@angular/router/src/shared';
 import { Util } from '../../../util';
 import { AccountService } from '../../services/account.service';
 import { TermUtils } from '../../model/budgetTerm';
+import { IdCounterService } from '../../services/id-counter.service';
 
 @Component({
   selector: 'app-expense-viewer',
@@ -39,7 +40,8 @@ export class ExpenseViewerComponent implements OnInit {
     private categoryService: CategoryService,
     private expenseService: ExpenseService,
     private route: ActivatedRoute,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private idCounterService: IdCounterService
   ) { }
 
   ngOnInit() {
@@ -60,6 +62,11 @@ export class ExpenseViewerComponent implements OnInit {
       });
 
     this.getExpenses();
+    //this.expenses.forEach((ex: Expense) => {
+      //let id = this.idCounterService.getNextSplitId();
+      //ex.splitId = id;
+      //this.expenseService.upsertRow(ex);
+    //});
     this.getAccount();
   }
 
@@ -128,23 +135,41 @@ export class ExpenseViewerComponent implements OnInit {
     this.selectedRow = e.data;
   }
 
-  onAdd(){
+  onSplit(splitExpense: Expense){
+    let newExpense = new Expense();
+    newExpense.amount = 0;
+    newExpense.splitId = splitExpense.splitId;
+    newExpense.date = splitExpense.date;
+    newExpense.name = splitExpense.name;
+    newExpense.accountId = splitExpense.accountId;
+    this.saveExpense(newExpense);
+  }
+
+  saveExpense(expense: Expense){
+    this.expenseService.upsertRow(expense);
+    this.getExpenses();
+  }
+
+  onAdd(splitExpense?: Expense){
     let newExpense = new Expense();
     newExpense.accountId = this.accountId
     newExpense.amount = 0;
     newExpense.name = "none"
     newExpense.categoryId = 0;
+    newExpense.splitId =  this.idCounterService.getNextSplitId(); 
 
     newExpense.date = this.expenses.length ? this.expenses[0].date : new Date();
-    this.expenseService.upsertRow(newExpense);
+    this.saveExpense(newExpense);
   }
 
   onDelete(expense: Expense){
     this.expenseService.deleteRow(expense); 
+    this.getExpenses();
   }
 
   findCategory(id: string){
-    return this.categories.find( c => c.value === parseInt(id));
+    let cat = this.categories.find( c => c.value === parseInt(id));
+    return cat ? cat : this.categories[0];
   }
 
   onSelectedMonthChange(date: Date){

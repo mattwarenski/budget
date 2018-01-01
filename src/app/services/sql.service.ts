@@ -1,3 +1,4 @@
+import { IdCounter } from '../model/idCounter';
 import { environment } from "../../environments/environment";
 import { Injectable } from '@angular/core';
 import { Expense } from "../model/expense";
@@ -16,7 +17,13 @@ export class SqlService {
   private dbReady: boolean
 
   constructor() {
-    this.db = createElectronDB(environment.dbLocation, [new Account(), new Expense(), new Category()]);
+    this.db = createElectronDB(environment.dbLocation,
+      [new Account(),
+       new Expense(),
+       new Category(),
+       new IdCounter()
+      ]);
+
     this.db.initDBSync();
   }
 

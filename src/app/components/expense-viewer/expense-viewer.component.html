@@ -21,7 +21,20 @@
        (onEditComplete)="editing=false; onEditComplete($event)"
        (onEditInit)="editing=true"
        (onEditCancel)="editing=false"
+       rowGroupMode="rowspan"
+       groupField="splitId"
+       sortField="splitId"
        [editable]='true'>
+      <p-column field="splitId" [style]="{'width': '30px'}">
+        <ng-template let-ex="rowData" pTemplate="header">
+          <span class="glyphicon glyphicon-link"></span>
+        </ng-template>
+        <ng-template let-col let-ex="rowData" pTemplate="body">
+          <a (click)="onSplit(ex)">
+            <span class="glyphicon glyphicon-link text-success"></span>
+          </a>
+        </ng-template>
+      </p-column>
       <p-column field="date"  [style]=" {'overflow':'visible' }" header="Date" [editable]="true">
         <ng-template let-col let-ex="rowData" pTemplate="body">
           {{ex[col.field] | date}}

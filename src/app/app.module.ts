@@ -17,6 +17,7 @@ import { SafeCurrencyPipe } from './pipes/safe-currency.pipe';
 import { MonthSelectorComponent } from './components/month-selector/month-selector.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ExpenseService } from './services/expense.service';
+import { IdCounterService } from './services/id-counter.service';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { ExpenseService } from './services/expense.service';
     CategoryService,
     AccountService,
     LayoutService,
-    ExpenseService
+    ExpenseService,
+    IdCounterService
   ],
   bootstrap: [AppComponent]
 })
