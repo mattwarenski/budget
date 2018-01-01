@@ -5,7 +5,9 @@ import { CategoryService } from '../../services/category.service';
 @Component({
   selector: 'app-budget-progress-bar',
   templateUrl: './budget-progress-bar.component.html',
-  styleUrls: ['./budget-progress-bar.component.css']
+  styles: [`a {
+    color : black 
+  }`]
 })
 export class BudgetProgressBarComponent implements OnInit {
 

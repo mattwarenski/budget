@@ -8,7 +8,9 @@ import { ExpenseService } from '../../services/expense.service';
 @Component({
   selector: 'app-budget-percentage-viewer',
   templateUrl: './budget-percentage-viewer.component.html',
-  styleUrls: ['./budget-percentage-viewer.component.css']
+  styles: [`a {
+    color : black 
+  }`]
 })
 export class BudgetPercentageViewerComponent implements OnInit {
 

@@ -1,3 +1,4 @@
+import { ActivatedRoute } from '@angular/router';
 import { Term } from '../../model/budgetTerm';
 import { Category } from "../../model/category";
 import { CategoryService } from "../../services/category.service";
@@ -12,7 +13,11 @@ import * as moment from 'moment';
 })
 export class CategoryViewerComponent implements OnInit{
 
-  constructor(private categoryService: CategoryService) { }
+  constructor(
+    private categoryService: CategoryService,
+    private route: ActivatedRoute
+  ) { }
+
   categories: any[];
   parentCategories: any[];
   categoryList: any[];
@@ -24,22 +29,29 @@ export class CategoryViewerComponent implements OnInit{
 
 
   ngOnInit() {
-    this.categories = this.categoryService.getAll();
-    this.categoryList = this.categoryService.getArrangedLabels(this.categories);
-    if(this.categories.length){
-      if(!this.selectedCategory){
-        this.selectedCategory = this.categories[0]; 
-        this.updateCategoryTotal();
-      }
-      else{
-        this.selectedCategory = this.categories.find( c => c.name === this.selectedCategory.name); 
-      }
-      this.parentCategories = this.getParentCategories();
-    }
-    else{
-      this.selectedCategory = null;
-      this.parentCategories = null;
-    }
+    this.route.queryParams.subscribe(
+      params => {
+        this.categories = this.categoryService.getAll();
+        this.categoryList = this.categoryService.getArrangedLabels(this.categories);
+        if(this.categories.length){
+          const queryCategory = +params['categoryId'];
+          if(queryCategory){
+            this.selectedCategory = this.categories.find( c => c.id === queryCategory); 
+          }
+          else if(!this.selectedCategory){
+            this.selectedCategory = this.categories[0]; 
+            this.updateCategoryTotal();
+          }
+          else{
+            this.selectedCategory = this.categories.find( c => c.name === this.selectedCategory.name); 
+          }
+          this.parentCategories = this.getParentCategories();
+        }
+        else{
+          this.selectedCategory = null;
+          this.parentCategories = null;
+        }
+      });
   }
 
   getParentCategories(): any[]{

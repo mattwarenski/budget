@@ -7,7 +7,9 @@
       <div [ngStyle]='{ "margin-left" : "15px"}'>
         <div *ngFor="let category of categories">
           <div *ngIf="!category.parentId">
-            <h3>{{category.name}} - {{category.budgetAmount | safeCurrency}}</h3>
+            <h3>
+              <a routerLink="/categories" [queryParams]="{'categoryId' : category.id}">{{category.name}} - {{category.budgetAmount | safeCurrency}}</a>
+            </h3>
           </div>
           <div *ngIf="category.budgetAmount !== 0" [ngStyle]="{'margin-left' : '10px'}">
             <app-budget-progress-bar  [category]="category" [selectedDate]="selectedDate"></app-budget-progress-bar>
