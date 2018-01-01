@@ -62,11 +62,6 @@ export class ExpenseViewerComponent implements OnInit {
       });
 
     this.getExpenses();
-    //this.expenses.forEach((ex: Expense) => {
-      //let id = this.idCounterService.getNextSplitId();
-      //ex.splitId = id;
-      //this.expenseService.upsertRow(ex);
-    //});
     this.getAccount();
   }
 
@@ -86,13 +81,14 @@ export class ExpenseViewerComponent implements OnInit {
       dbFilter.earliestDate = TermUtils.getMonthStart(this.displayMonth);
       dbFilter.latestDate = TermUtils.getMonthEnd(this.displayMonth);
     }
+
     dbFilter.dateField = "date";
 
 
-    //sort by date then id so that newest on is always on top
+    //sort by date splitID then id so that newest on is always on top. This tricks primeng into sorting by date then split id
     this.expenses = this.expenseService
       .getAll(expenseModel, dbFilter)
-      .sort((a: Expense, b: Expense) => (+b.date) - (+a.date) || b.id - a.id);
+      .sort((a: Expense, b: Expense) => (+b.date) - (+a.date) || b.splitId - a.splitId || b.id - a.id);
   }
 
   getTotal(){
