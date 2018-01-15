@@ -84,11 +84,11 @@ export class ExpenseViewerComponent implements OnInit {
 
     dbFilter.dateField = "date";
 
-
     //sort by date splitID then id so that newest on is always on top. This tricks primeng into sorting by date then split id
     this.expenses = this.expenseService
-      .getAll(expenseModel, dbFilter)
-      .sort((a: Expense, b: Expense) => (+b.date) - (+a.date) || b.splitId - a.splitId || b.id - a.id);
+      .getAll(expenseModel, dbFilter);
+
+    this.expenses.forEach( e => e.sortKey = `${moment(e.date).format("YYYYMMDD")}_${e.splitId}`);
   }
 
   getTotal(){
@@ -102,7 +102,7 @@ export class ExpenseViewerComponent implements OnInit {
       }, 0);
       //TODO: update the total 
     }
-    let data = event instanceof Expense ? event : event.data;
+    let data: Expense = event instanceof Expense ? event : event.data;
     this.expenseService.upsertRow(data);
   }
 

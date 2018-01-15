@@ -29,4 +29,6 @@ export class Expense extends RowEntity{
 
   @Column(DataType.INT)
   splitId: number;
+
+  sortKey: string;
 }

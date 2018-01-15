@@ -22,10 +22,11 @@
        (onEditInit)="editing=true"
        (onEditCancel)="editing=false"
        rowGroupMode="rowspan"
-       groupField="splitId"
-       sortField="splitId"
+       groupField="sortKey"
+       sortField="sortKey"
+       sortOrder="-1"
        [editable]='true'>
-      <p-column field="splitId" [style]="{'width': '30px'}">
+      <p-column field="sortKey" [style]="{'width': '30px'}">
         <ng-template let-ex="rowData" pTemplate="header">
           <span class="glyphicon glyphicon-link"></span>
         </ng-template>
