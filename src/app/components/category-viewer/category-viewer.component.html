@@ -42,7 +42,7 @@
         <b>Amount:</b><br>
         <input class="input input-sm form-control"
                id="amount-input"
-               (ngModelChange)="selectedCategory.budgetAmount = $event.replace('$',''); updateAmount()"
+               (ngModelChange)="selectedCategory.budgetAmount = $event.replace('$',''); updateCategory()"
                [ngModel]="selectedCategory.budgetAmount | safeCurrency">
       </div>
       <div class="form-group">

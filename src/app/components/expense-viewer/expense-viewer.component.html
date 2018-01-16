@@ -51,7 +51,18 @@
           <span>{{findCategory(ex['categoryId']).label}}</span>
         </ng-template>
         <ng-template let-col let-ex="rowData" pTemplate='editor'>
-          <p-dropdown [filter]='true' [(ngModel)]='ex[col.field]' (onChange)="onEditComplete(ex)" [options]='categories' [style]="{'width': '100%'}"></p-dropdown>
+          <p-dropdown [filter]='true' [(ngModel)]='ex[col.field]' (onChange)="onEditComplete(ex)" [options]='categories' [style]="{'width': '100%'}">
+            <ng-template let-category pTemplate="item">
+              <div class="ui-helper-clearfix" style="position: relative;height: 20px;">
+                <div *ngIf="category.parent; else child">
+                  <b>{{category.label}}</b>
+                </div>
+                <ng-template #child>
+                  <div [ngStyle]="{'margin-left' : '15px'}">{{category.label}}</div>
+                </ng-template>
+              </div>
+            </ng-template>
+          </p-dropdown>
         </ng-template>
       </p-column>
       <p-column field="amount" header="Amount" styleClass="text-right" [editable]="true">

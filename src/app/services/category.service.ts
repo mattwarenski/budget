@@ -73,8 +73,8 @@ export class CategoryService extends AbstractTableService<Category> {
 
   getRolloverTotal(category: Category): number{
     let today = new Date();
-    if(category.rollOverStartDate > today){
-      console.error("Cannot determine roll over total for category. Start date in future", category);
+    if(moment(category.rollOverStartDate).isAfter(moment(today))){
+      return category.rolloverStartAmount;
     }
     //total from start until today
     let total = this.getTotalWithDates(category, category.rollOverStartDate, null); 
