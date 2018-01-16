@@ -42,8 +42,8 @@
         <b>Amount:</b><br>
         <input class="input input-sm form-control"
                id="amount-input"
-               (change)="updateCategory()"
-               [(ngModel)]="selectedCategory.budgetAmount">
+               (ngModelChange)="selectedCategory.budgetAmount = $event.replace('$',''); updateAmount()"
+               [ngModel]="selectedCategory.budgetAmount | safeCurrency">
       </div>
       <div class="form-group">
         <b>Parent Category:</b><br>
@@ -77,6 +77,12 @@
       <div *ngIf="(isOneTime() || selectedCategory.isRollover) && selectedCategory.rollOverStartDate" class="form-group">
         <b>{{isOneTime() ? "One Time Start:" : "Rollover Start Date:"}}</b><br>
         <app-month-selector (onSelect)="updateRolloverStart($event)" [selectedDate]="selectedCategory.rollOverStartDate"></app-month-selector>
+      </div>
+      <div *ngIf="selectedCategory.isRollover && selectedCategory.rollOverStartDate" class="form-group">
+        <b>Rollover Start Amount:</b><br>
+        <input class="input input-sm form-control"
+               (ngModelChange)="selectedCategory.rolloverStartAmount = $event.replace('$',''); updateCategory()"
+               [ngModel]="selectedCategory.rolloverStartAmount | safeCurrency">
       </div>
     </div>
   </div>

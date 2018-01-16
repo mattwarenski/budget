@@ -80,7 +80,7 @@ export class CategoryService extends AbstractTableService<Category> {
     let total = this.getTotalWithDates(category, category.rollOverStartDate, null); 
     //1 for the current month since the current date - the current month would be 0
     let numMonths = moment(today).diff(category.rollOverStartDate, 'months') + 1;
-    return (numMonths * category.budgetAmount) + total;
+    return (numMonths * category.budgetAmount) + total + category.rolloverStartAmount;
   }
 
   getTotal(startCategory: Category, startDate: Date): number {

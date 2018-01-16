@@ -30,4 +30,7 @@ export class Category extends RowEntity{
 
   @Column(DataType.BOOLEAN)
   isRollover: boolean;
+
+  @Column(DataType.DECIMAL)
+  rolloverStartAmount: number;
 }

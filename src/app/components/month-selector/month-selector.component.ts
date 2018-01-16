@@ -8,19 +8,28 @@ import * as moment from 'moment';
 })
 export class MonthSelectorComponent implements OnInit {
   months: any[];
-  @Output() onSelect = new EventEmitter();
-  @Input() selectedDate: Date;
-
   selectedVal: string;
+  private __selectedDate: Date;
+
+  @Output() onSelect = new EventEmitter();
+  @Input() set selectedDate(date: Date){
+    this.__selectedDate = moment(date).startOf('month').toDate(); 
+    this.selectedVal = this.__selectedDate.toString();
+  }
+
+  get selectedDate(){
+    return this.__selectedDate; 
+  }
+
 
   constructor() { }
 
   ngOnInit() {
-    if(!this.selectedDate){
-      this.selectedDate = moment(new Date()).startOf('month').toDate();
+    if(!this.__selectedDate){
+      this.__selectedDate = moment(new Date()).startOf('month').toDate();
     }
     else{
-      this.selectedDate = moment(this.selectedDate).startOf('month').toDate(); 
+      this.__selectedDate = moment(this.__selectedDate).startOf('month').toDate(); 
     }
 
     this.months = [];
@@ -39,7 +48,7 @@ export class MonthSelectorComponent implements OnInit {
       });
     }
 
-    this.selectedVal = this.selectedDate.toString();
+    this.selectedVal = this.__selectedDate.toString();
   }
 
   onChange(){
