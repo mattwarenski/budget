@@ -18,11 +18,17 @@ import { Util } from '../../../util';
 import { AccountService } from '../../services/account.service';
 import { TermUtils } from '../../model/budgetTerm';
 import { IdCounterService } from '../../services/id-counter.service';
+import { ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-expense-viewer',
   templateUrl: './expense-viewer.component.html',
-  styleUrls: ['./expense-viewer.component.css']
+  encapsulation: ViewEncapsulation.None,
+  styles: [`
+      .ui-datatable .ui-datatable-scrollable-body {
+        height: 500px !important;
+      }
+    `]
 })
 export class ExpenseViewerComponent implements OnInit {
   expenses: Expense[] = [];
@@ -163,8 +169,12 @@ export class ExpenseViewerComponent implements OnInit {
     newExpense.categoryId = 0;
     newExpense.splitId =  this.idCounterService.getNextSplitId(); 
 
-    this.expenses.values
-    newExpense.date = this.expenses.length ? this.getMaxDate() : new Date();
+    if(this.expenses.length){
+      newExpense.date = this.getMaxDate()
+    } else {
+      newExpense.date = this.displayMonth || new Date();  
+    }
+
     this.saveExpense(newExpense);
   }
 
