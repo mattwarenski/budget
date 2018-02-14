@@ -146,6 +146,15 @@ export class ExpenseViewerComponent implements OnInit {
     this.getExpenses();
   }
 
+  /**
+   * Get the latest date from the list of expenses
+   */
+  getMaxDate(): Date{
+    return new Date(Math.max.apply(null, this.expenses.map(function(e) {
+      return new Date(e.date);
+    })));
+  }
+
   onAdd(splitExpense?: Expense){
     let newExpense = new Expense();
     newExpense.accountId = this.accountId
@@ -154,7 +163,8 @@ export class ExpenseViewerComponent implements OnInit {
     newExpense.categoryId = 0;
     newExpense.splitId =  this.idCounterService.getNextSplitId(); 
 
-    newExpense.date = this.expenses.length ? this.expenses[0].date : new Date();
+    this.expenses.values
+    newExpense.date = this.expenses.length ? this.getMaxDate() : new Date();
     this.saveExpense(newExpense);
   }
 
