@@ -13,20 +13,22 @@ export class BudgetProgressBarComponent implements OnInit {
 
   @Input() category: Category;
   @Input() selectedDate: string;
-  totalSpent: number;
+  total: number;
   percentage: number;
   dateString: string;
-  totalAmount: number;
+  rollOverAmount: number;
 
   constructor(
     private categoryService: CategoryService 
   ) { }
 
   ngOnInit() {
-    this.totalAmount = this.category.isRollover ? this.categoryService.getRolloverTotal(this.category) : this.category.budgetAmount;
-    this.totalSpent = -this.categoryService.getTotal(this.category, new Date(this.selectedDate))
-    this.percentage = Math.round((this.totalSpent / this.totalAmount) * 100);
+    this.total = -this.categoryService.getTotal(this.category, new Date(this.selectedDate))
+    this.percentage = Math.round((this.total / this.category.budgetAmount) * 100);
     this.dateString = this.selectedDate.toString();
+    if(this.category.isRollover){
+      this.rollOverAmount = this.categoryService.getRolloverTotal(this.category); 
+    }
   }
 
 
@@ -38,6 +40,16 @@ export class BudgetProgressBarComponent implements OnInit {
     } else{
       return "progress-bar-danger";
     }
+  }
+
+  getLabelStyleClass(){
+    if(this.rollOverAmount > 0){
+      return "label-success" 
+    }
+    else if(this.rollOverAmount < 0){
+      return "label-danger" 
+    }
+    return "label-warning" 
   }
 
   getRoundedPercentage( ){
