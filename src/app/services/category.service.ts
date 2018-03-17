@@ -125,15 +125,26 @@ export class CategoryService extends AbstractTableService<Category> {
     })
   }
 
-  getRolloverTotal(category: Category): number{
-    let today = new Date();
-    if(moment(category.rollOverStartDate).isAfter(moment(today))){
+  /**
+   *category - the category to add up 
+   *startMonth - If present, will get what rollover total was at the beginning of the supplied month
+   */
+  getRolloverTotal(category: Category, startMonth?: Date): number{
+    let toDate;
+    if(startMonth){
+      //subtract a day so that expenses for the first of the month are not counted
+      toDate = moment(new Date(startMonth)).startOf('month').subtract(1, 'day').toDate();
+    } else{
+     toDate = new Date(); 
+    }
+    if(moment(category.rollOverStartDate).isAfter(moment(toDate))){
       return category.rolloverStartAmount;
     }
     //total from start until today
-    let total = this.getTotalWithDates(category, category.rollOverStartDate, null); 
+    let total = this.getTotalWithDates(category, category.rollOverStartDate, toDate); 
     //1 for the current month since the current date - the current month would be 0
-    let numMonths = moment(today).diff(category.rollOverStartDate, 'months') + 1;
+    //2 to account for the subtracted month on toDate. See above
+    let numMonths = moment(toDate).diff(category.rollOverStartDate, 'months') + (startMonth ? 2 : 1);
     return (numMonths * category.budgetAmount) + total + category.rolloverStartAmount;
   }
 

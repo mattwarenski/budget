@@ -1,6 +1,7 @@
 import { Category } from '../../model/category';
 import { Input, Component, OnInit } from '@angular/core';
 import { CategoryService } from '../../services/category.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-budget-progress-bar',
@@ -16,7 +17,8 @@ export class BudgetProgressBarComponent implements OnInit {
   total: number;
   percentage: number;
   dateString: string;
-  rollOverAmount: number;
+  amountLeft: number;
+  denominator: number;
 
   constructor(
     private categoryService: CategoryService 
@@ -24,11 +26,24 @@ export class BudgetProgressBarComponent implements OnInit {
 
   ngOnInit() {
     this.total = -this.categoryService.getTotal(this.category, new Date(this.selectedDate))
-    this.percentage = Math.round((this.total / this.category.budgetAmount) * 100);
-    this.dateString = this.selectedDate.toString();
     if(this.category.isRollover){
-      this.rollOverAmount = this.categoryService.getRolloverTotal(this.category); 
+      this.denominator = this.categoryService.getRolloverTotal(this.category,new Date(this.selectedDate));
+    }else{
+      this.denominator = this.category.budgetAmount;
     }
+
+    //If you have no money and haven't spent it you've used it all 
+    if(this.denominator === 0 && this.total === 0){
+      this.percentage = 100; 
+    }
+    //If you have no money and have spent any you've over spent
+    else if((this.denominator ===0 && this.total > 0) || this.denominator < 0){
+      this.percentage = 101; 
+    } else{
+      this.percentage = Math.round((this.total / this.denominator) * 100);
+    }
+    this.dateString = this.selectedDate.toString();
+    this.amountLeft = this.denominator - this.total;
   }
 
 
@@ -40,16 +55,6 @@ export class BudgetProgressBarComponent implements OnInit {
     } else{
       return "progress-bar-danger";
     }
-  }
-
-  getLabelStyleClass(){
-    if(this.rollOverAmount > 0){
-      return "label-success" 
-    }
-    else if(this.rollOverAmount < 0){
-      return "label-danger" 
-    }
-    return "label-warning" 
   }
 
   getRoundedPercentage( ){
