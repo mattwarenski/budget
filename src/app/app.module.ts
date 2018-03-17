@@ -18,6 +18,7 @@ import { MonthSelectorComponent } from './components/month-selector/month-select
 import { AppRoutingModule } from './app-routing.module';
 import { ExpenseService } from './services/expense.service';
 import { IdCounterService } from './services/id-counter.service';
+import { AccordionModule } from 'primeng/components/accordion/accordion';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { IdCounterService } from './services/id-counter.service';
     FormsModule,
     BrowserAnimationsModule,
     ProgressBarModule,
-    AppRoutingModule
+    AppRoutingModule,
+    AccordionModule,
   ],
   providers: [
     SqlService,

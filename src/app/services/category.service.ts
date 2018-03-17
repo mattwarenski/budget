@@ -22,6 +22,8 @@ export class CategoryService extends AbstractTableService<Category> {
     return this.getMapAndCategoriesArranged(categories)[0];
   }
 
+
+
   private getMapAndCategoriesArranged(entities: Category[]): [any[], any]{
     let childCategories = {};
     let parentMap = {};
@@ -49,6 +51,58 @@ export class CategoryService extends AbstractTableService<Category> {
    });
 
     return [categories, parentMap];
+  }
+
+  /**
+   * Return a list of objects
+   * {
+   *    parent: parentCategory
+   *    children: list of parent and all child categories 
+   * }
+   */
+  getParentChildObject(categories: Category[]){
+    const allCategories = [];
+    let currentObj;
+
+    this.getAllAranged(categories).forEach((cat: Category) => {
+      if(!cat.parentId){
+        if(currentObj){
+          allCategories.push(currentObj);
+        }
+        currentObj = {};
+        currentObj.parent = cat;
+        currentObj.children = [];
+      }
+      currentObj.children.push(cat);
+    });
+    return allCategories;
+  
+  }
+
+  filterRolloverBudgetsFromCategoryList(parentChildObj: any[]){
+    return parentChildObj.map( pc =>{
+      let copy: any = {};
+      copy.parent = pc.parent;
+      copy.children = pc.children.filter((c: Category)=> c.isRollover);
+      if(copy.children.length){
+        return copy; 
+      }
+      return null;
+    })
+    .filter(pc => pc);
+  }
+
+  filterMonthlyrBudgetsFromCategoryList(parentChildObj: any[]){
+    return parentChildObj.map( pc =>{
+      let copy: any = {};
+      copy.parent = pc.parent;
+      copy.children = pc.children.filter((c: Category)=> !c.isRollover);
+      if(copy.children.length){
+        return copy; 
+      }
+      return null;
+    })
+    .filter(pc => pc);
   }
 
   /**
