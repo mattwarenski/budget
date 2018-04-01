@@ -23,7 +23,7 @@
         </p-accordionTab>
         <p-accordionTab header="Roll Over" selected="true">
           <div *ngFor='let category of rolloverCategories'>
-            <div *ngIf='category.children.length > 1 || category.parent.budgetAmount > 0'>
+            <div *ngIf='category.children.length > 0 || category.parent.budgetAmount > 0'>
               <h3>
                 <a routerLink="/categories" [queryParams]="{'categoryId' : category.parent.id}">{{category.parent.name}} {{category.parent.budgetAmount | safeCurrency}}</a>
               </h3>
