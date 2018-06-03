@@ -8,6 +8,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
+    "prepare": "cp -a electron/. dist",
+    "electron": "npm run prepare && electron dist",
     "e2e": "ng e2e",
     "postinstall": "install-app-deps"
   },
