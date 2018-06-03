@@ -4,19 +4,41 @@
     <h2>Budget Progress</h2>
     <div class="left-margin">
       <app-month-selector (onSelect)="onSelectedMonthChange($event)"></app-month-selector>
-      <div [ngStyle]='{ "margin-left" : "15px"}'>
-        <div *ngFor="let category of categories">
-          <div *ngIf="!category.parentId">
-            <h3>
-              <a routerLink="/categories" [queryParams]="{'categoryId' : category.id}">{{category.name}} - {{category.budgetAmount | safeCurrency}}</a>
-            </h3>
-          </div>
-          <div *ngIf="category.budgetAmount !== 0" [ngStyle]="{'margin-left' : '10px'}">
-            <app-budget-progress-bar  [category]="category" [selectedDate]="selectedDate"></app-budget-progress-bar>
-          </div>
-        </div>
-      </div>
       <br>
+      <br>
+      <p-accordion [multiple]="true">
+        <p-accordionTab header="Monthly" selected="true">
+          <div *ngFor='let category of monthlyCategories'>
+            <div *ngIf='category.children.length > 1 || category.parent.budgetAmount > 0'>
+              <h3>
+                <a routerLink="/categories" [queryParams]="{'categoryId' : category.parent.id}">{{category.parent.name}} {{category.parent.budgetAmount | safeCurrency}}</a>
+              </h3>
+              <div *ngFor='let child of category.children'>
+                <div *ngIf="child.budgetAmount !== 0" [ngStyle]="{'margin-left' : '10px'}">
+                  <app-budget-progress-bar  [category]="child" [selectedDate]="selectedDate"></app-budget-progress-bar>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-accordionTab>
+        <p-accordionTab header="Roll Over" selected="true">
+          <div *ngFor='let category of rolloverCategories'>
+            <div *ngIf='category.children.length > 0 || category.parent.budgetAmount > 0'>
+              <h3>
+                <a routerLink="/categories" [queryParams]="{'categoryId' : category.parent.id}">{{category.parent.name}} {{category.parent.budgetAmount | safeCurrency}}</a>
+              </h3>
+              <div *ngFor='let child of category.children'>
+                <div *ngIf="child.budgetAmount !== 0" [ngStyle]="{'margin-left' : '10px'}">
+                  <app-budget-progress-bar  [category]="child" [selectedDate]="selectedDate"></app-budget-progress-bar>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-accordionTab>
+        <!--<p-accordionTab header="Income">-->
+          <!--Content 3    -->
+        <!--</p-accordionTab>-->
+      </p-accordion>
     </div>
   </div>
   <div class="col-md-6">
@@ -30,6 +52,5 @@
     <br>
     <p><b>Total Earned In Month:</b> {{ spentInMonth | safeCurrency}}</p>
     <p><b>Total Spent In Month:</b> {{ earnedInMonth | safeCurrency}}</p>
-
   </div>
 </div>
