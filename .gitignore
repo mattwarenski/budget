@@ -3,6 +3,7 @@
 *.swp
 *.*.swp
 /data
+/release-builds
 
 # compiled output
 /dist
