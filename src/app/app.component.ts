@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { SqlService } from "./services/sql.service";
 import { OnInit } from "@angular/core";
 import { Expense } from "./model/expense";
+import {SettingsService} from './services/settings.service';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,6 @@ export class AppComponent implements OnInit {
     this.showCategories = true;
     this.showStats = true;
   }
-  
-  constructor(private sqlService: SqlService){ }
+
+  constructor(private sqlService: SqlService, private settingsService: SettingsService){ }
 }

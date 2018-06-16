@@ -10,6 +10,9 @@ export const BoxStorageProvider : StorageProvider = {
   save: (tmpFileLocation: string) => {
 
   },
+  getDisplayInfo: (): string => {
+    return "Account Name: ";
+  },
   displayName: "Box.com"
 };
 

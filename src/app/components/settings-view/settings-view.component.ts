@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {Settings} from '../../model/settings';
 import {SettingsService} from '../../services/settings.service';
 import {StorageProvider} from '../../util/storage_provider/storage.provider';
 import {ElectronAppInfo} from '../../electron-app-info';
+import {SqlService} from '../../services/sql.service';
 
 @Component({
   selector: 'app-settings-view',
@@ -11,16 +11,13 @@ import {ElectronAppInfo} from '../../electron-app-info';
 })
 export class SettingsViewComponent implements OnInit {
 
-  private settings: Settings;
   public storageProvider: StorageProvider;
   public storageProviders: any[];
 
-  constructor(private settingsService: SettingsService) { }
+  constructor(private sqlService: SqlService, private settingsService: SettingsService) { }
 
   ngOnInit() {
-    this.settings = this.settingsService.get();
-
-    this.storageProvider = this.settingsService.getStorageProvider(this.settings);
+    this.storageProvider = this.settingsService.getStorageProvider();
 
 
     this.storageProviders = ElectronAppInfo.storageProviders.map(( provider: StorageProvider ) => {
@@ -34,6 +31,7 @@ export class SettingsViewComponent implements OnInit {
 
   onProviderChange(selectedProvider: StorageProvider){
     this.storageProvider = selectedProvider;
+    this.storageProvider.authenticate();
     this.settingsService.setStorageProvider(selectedProvider);
   }
 

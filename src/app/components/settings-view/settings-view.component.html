@@ -2,3 +2,4 @@
 
 <h2>Storage Location</h2>
 <p-dropdown [options]="storageProviders" [ngModel]="storageProvider" (onChange)="onProviderChange($event.value)" ></p-dropdown>
+<p>{{storageProvider.getDisplayInfo()}}</p>

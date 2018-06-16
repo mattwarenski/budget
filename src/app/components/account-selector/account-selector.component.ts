@@ -33,7 +33,6 @@ export class AccountSelectorComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log("initializing");
     this.accounts = this.accountService.getAll();
     this.accounts.forEach( (account: Account) => {
         let filter = new Expense();
@@ -73,14 +72,14 @@ export class AccountSelectorComponent implements OnInit {
           expense.amount = parseFloat(line[4]);
           expense.date = moment(line[2], "MM-DD-YYYY").toDate();
           expense.name = line[7];
-          expense.splitId = this.idCounterService.getNextSplitId(); 
+          expense.splitId = this.idCounterService.getNextSplitId();
           return expense;
         })
         .filter( expense => expense.amount || expense.amount === 0)
         //.forEach( expense => console.log(expense));
         .forEach( expense => this.expenseService.upsertRow(expense));
 
-    } 
+    }
   }
 
   onAdd(){
@@ -94,6 +93,6 @@ export class AccountSelectorComponent implements OnInit {
   }
 
   onDelete(expense: Account){
-    this.accountService.deleteRow(expense); 
+    this.accountService.deleteRow(expense);
   }
 }

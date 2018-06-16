@@ -1,12 +1,9 @@
 import { IdCounter } from '../model/idCounter';
-import { environment } from "../../environments/environment";
 import { Injectable } from '@angular/core';
 import { Expense } from "../model/expense";
 import { createElectronDB } from "sqlite-base/ElectronDataBase";
 import { Category } from "../model/category";
 import { Account } from '../model/account';
-import { DataBase } from 'sqlite-base/DataBase';
-import {Settings} from '../model/settings';
 
 /**
  * Initializes the DB and loads all row entities into the db
@@ -17,20 +14,21 @@ export class SqlService {
   private dbLocation: string;
   private dbReady: boolean
 
-  constructor() {
-    this.db = createElectronDB(environment.dbLocation,
+  constructor() { }
+
+  loadDB(fileLocation: string){
+    this.db = createElectronDB(fileLocation,
       [new Account(),
         new Expense(),
         new Category(),
-        new IdCounter(),
-        new Settings()
+        new IdCounter()
       ]);
 
     this.db.initDBSync();
+
   }
 
   getDB(){
     return this.db;
   }
 }
-

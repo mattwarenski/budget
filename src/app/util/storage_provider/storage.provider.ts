@@ -18,6 +18,7 @@ export interface StorageProvider {
    * Authenticate with service provdier. Will do nothing if storage is local
    */
   authenticate: ()=>void;
+  getDisplayInfo: ()=>string;
 
   displayName: string;
 }
