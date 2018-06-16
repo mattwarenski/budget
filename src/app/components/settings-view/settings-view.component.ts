@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import {Settings} from '../../model/settings';
+import {SettingsService} from '../../services/settings.service';
+import {StorageProvider} from '../../util/storage_provider/storage.provider';
+import {ElectronAppInfo} from '../../electron-app-info';
 
 @Component({
   selector: 'app-settings-view',
@@ -7,9 +11,30 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SettingsViewComponent implements OnInit {
 
-  constructor() { }
+  private settings: Settings;
+  public storageProvider: StorageProvider;
+  public storageProviders: any[];
+
+  constructor(private settingsService: SettingsService) { }
 
   ngOnInit() {
+    this.settings = this.settingsService.get();
+
+    this.storageProvider = this.settingsService.getStorageProvider(this.settings);
+
+
+    this.storageProviders = ElectronAppInfo.storageProviders.map(( provider: StorageProvider ) => {
+        return {
+          label: provider.displayName,
+          value: provider
+        }
+      }
+    );
+  }
+
+  onProviderChange(selectedProvider: StorageProvider){
+    this.storageProvider = selectedProvider;
+    this.settingsService.setStorageProvider(selectedProvider);
   }
 
 }

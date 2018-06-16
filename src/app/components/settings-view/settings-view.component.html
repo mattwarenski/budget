@@ -1,4 +1,4 @@
-<p>
-  settings-view works!
-</p>
+<h1>Settings</h1>
 
+<h2>Storage Location</h2>
+<p-dropdown [options]="storageProviders" [ngModel]="storageProvider" (onChange)="onProviderChange($event.value)" ></p-dropdown>

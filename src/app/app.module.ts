@@ -20,6 +20,7 @@ import { ExpenseService } from './services/expense.service';
 import { IdCounterService } from './services/id-counter.service';
 import { AccordionModule } from 'primeng/components/accordion/accordion';
 import { SettingsViewComponent } from './components/settings-view/settings-view.component';
+import {SettingsService} from './services/settings.service';
 
 @NgModule({
   declarations: [
@@ -34,8 +35,8 @@ import { SettingsViewComponent } from './components/settings-view/settings-view.
     SettingsViewComponent,
   ],
   imports: [
-    BrowserModule, 
-    DataTableModule, 
+    BrowserModule,
+    DataTableModule,
     SharedModule,
     CalendarModule,
     DropdownModule,
@@ -51,7 +52,8 @@ import { SettingsViewComponent } from './components/settings-view/settings-view.
     AccountService,
     LayoutService,
     ExpenseService,
-    IdCounterService
+    IdCounterService,
+    SettingsService
   ],
   bootstrap: [AppComponent]
 })

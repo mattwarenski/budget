@@ -3,7 +3,7 @@ import { RowEntity } from "sqlite-base/RowEntity";
 
 export class Expense extends RowEntity{
   constructor(){
-    super("Expense") 
+    super("Expense")
   }
 
   @Column(DataType.INTEGER, Constraint.PRIMARY_KEY)
@@ -19,11 +19,11 @@ export class Expense extends RowEntity{
   description: string;
 
   @Column(DataType.DECIMAL ,Constraint.NOT_NULL)
-  amount: number; 
+  amount: number;
 
   @Column(DataType.INT)
   categoryId: number;
-
+e
   @Column(DataType.INT, Constraint.NOT_NULL)
   accountId: number;
 
