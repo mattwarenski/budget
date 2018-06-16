@@ -19,6 +19,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { ExpenseService } from './services/expense.service';
 import { IdCounterService } from './services/id-counter.service';
 import { AccordionModule } from 'primeng/components/accordion/accordion';
+import { SettingsViewComponent } from './components/settings-view/settings-view.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { AccordionModule } from 'primeng/components/accordion/accordion';
     BudgetProgressBarComponent,
     SafeCurrencyPipe,
     MonthSelectorComponent,
+    SettingsViewComponent,
   ],
   imports: [
     BrowserModule, 
